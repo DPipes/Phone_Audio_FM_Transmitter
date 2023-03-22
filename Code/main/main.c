@@ -30,6 +30,7 @@ void app_main(void)
     disp_init();
     printf("Display initialized successfully");
 
+    /* Variables for current and previous GPIO state */
     int freq = 1;
     int play = 1;
     int prev = 1;
@@ -41,16 +42,21 @@ void app_main(void)
 
     /* Main loop */
     while (true) {
+
+        // TODO Check if this can be done with any GPIO functions rather than having to track current and previous pin state
+        /* Get current GPIO state */
         freq_ = gpio_get_level(CHANGE_FREQ_PIN);
         play_ = gpio_get_level(PLAY_PAUSE_PIN);
         prev_ = gpio_get_level(PREV_PIN);
         next_ = gpio_get_level(NEXT_PIN);
 
+        /* On button release perform functions */
         if (freq_ && !freq) change_freq();
         if (play_ && !play) blt_play_pause();
         if (prev_ && !prev) blt_prev();
         if (next_ && !next) blt_next();
 
+        /* Update previous GPIO state */
         freq = freq_;
         play = play_;
         prev = prev_;
