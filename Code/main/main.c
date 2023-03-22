@@ -11,6 +11,7 @@
 #include "rec.h"
 #include "trans.h"
 #include "input.h"
+#include "fm.h"
 
 void app_main(void)
 {
@@ -29,9 +30,31 @@ void app_main(void)
     disp_init();
     printf("Display initialized successfully");
 
+    int freq = 1;
+    int play = 1;
+    int prev = 1;
+    int next = 1;
+    int freq_ = 1;
+    int play_ = 1;
+    int prev_ = 1;
+    int next_ = 1;
+
     /* Main loop */
     while (true) {
-        
+        freq_ = gpio_get_level(CHANGE_FREQ_PIN);
+        play_ = gpio_get_level(PLAY_PAUSE_PIN);
+        prev_ = gpio_get_level(PREV_PIN);
+        next_ = gpio_get_level(NEXT_PIN);
+
+        if (freq_ && !freq) change_freq();
+        if (play_ && !play) blt_play_pause();
+        if (prev_ && !prev) blt_prev();
+        if (next_ && !next) blt_next();
+
+        freq = freq_;
+        play = play_;
+        prev = prev_;
+        next = next_;
     }
     
     /* De-Initialize */
