@@ -40,8 +40,20 @@ void app_main(void)
     int prev_ = 1;
     int next_ = 1;
 
+    /* For testing */
+    uint8_t text[5] = {'w', 'o', 'r', 'd', 's'};
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+
     /* Main loop */
     while (true) {
+
+        /* For testing */
+        disp_text(text, 5, 0);
+        disp_text(text, 0, 1);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        disp_text(text, 0, 0);
+        disp_text(text, 5, 1);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         // TODO Check if this can be done with any GPIO functions rather than having to track current and previous pin state
         /* Get current GPIO state */

@@ -13,6 +13,8 @@ void disp_read(uint8_t reg_addr, uint8_t *data, size_t len){
 }
 
 void disp_init(void){
+    uint8_t val[9] = {0x38, 0x39, 0x14, 0x78, 0x5E, 0x6D, 0x0C, 0x01, 0x06 };
+
     if (disp_active) {
         // TODO Reinitialize display if already active
     }
@@ -31,6 +33,12 @@ void disp_init(void){
     disp_active = 1;
     gpio_set_level(DISP_RST_PIN, disp_active);
 
+    disp_write(0x00, val, 1);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+    disp_write(0x00, val + 1, 1);
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+    disp_write(0x00, val + 2, 7);
+
     // TODO Post-reset display configuration
 }
 
@@ -42,13 +50,13 @@ void disp_clear(void){
 void disp_text(unsigned char *text, uint8_t len, uint8_t row){
     int offset = (MAX_CHARACTERS - len)/2;
     
-    uint8_t *data = (uint8_t *) malloc(sizeof(uint8_t) * (MAX_CHARACTERS + 2));
-    data[0] = SET_DDRAM_ADDRESS | (row * DDRAM_SECOND_ROW_START);
-    data[1] = DISP_RS;
+    uint8_t data[MAX_CHARACTERS];
     for(int i = 0; i < MAX_CHARACTERS; i++){
-        if ((i >= offset) && (i < offset + len)) data[i + 2] = text[i - offset];
-        else data[i + 2] = 0x20;
+        if ((i >= offset) && (i < offset + len)) data[i] = text[i - offset];
+        else data[i] = 0x20;
     }
 
-    disp_write(Co_REG, data, len + 2);
+    uint8_t command = SET_DDRAM_ADDRESS | (row * DDRAM_SECOND_ROW_START);
+    disp_write(0x00, &command, 1);
+    disp_write(0x40, data, MAX_CHARACTERS);
 }

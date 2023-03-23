@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "i2c_main.h"
 
-#define DISP_ADDR       0x78
+#define DISP_ADDR       0x3C
 #define DISP_RST_PIN    6
 #define MAX_CHARACTERS  20
 

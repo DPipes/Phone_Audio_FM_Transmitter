@@ -13,13 +13,14 @@ void i2c_register_write(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, size_
 {
     /* Initialize write buffer with register address followed by data to write */
     uint8_t* write_buf = (uint8_t *) malloc(sizeof(uint8_t) * (len + 1));
+
     write_buf[0] = reg_addr;
     for(int i = 0; i < len; i++){
         write_buf[i + 1] = data[i];
     }
 
     /* Write data */
-    i2c_master_write_to_device(I2C_MASTER_NUM, dev_addr, write_buf, sizeof(write_buf), I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
+    i2c_master_write_to_device(I2C_MASTER_NUM, dev_addr, write_buf, len + 1, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
 
     /* Release buffer */
     free(write_buf);
