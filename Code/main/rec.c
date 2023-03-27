@@ -35,9 +35,9 @@ void rec_init(void){
 }
 
 void rec_freq(uint16_t freq){
-
+    // TODO set new recieveing frequency
 }
 
 void rec_param(uint8_t *rssi, uint8_t *snr, uint8_t *mpi){
-
+    // TODO recieve signal strength parameters
 }
