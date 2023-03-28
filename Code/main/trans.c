@@ -37,3 +37,14 @@ void trans_init(void){
 void trans_freq(uint16_t freq){
 
 }
+
+void power_up_std(void){
+    uint8_t cmd = 0x1;
+    uint8_t arg1 = 0x12;
+    uint8_t arg2 = 0x0f;
+    uint8_t args[] = {arg1,arg2};
+    
+    trans_write(cmd,args,sizeof(args));
+
+    //TODO receive the status byte
+}

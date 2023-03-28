@@ -1,0 +1,71 @@
+Full document for programming the chips:
+
+
+Procedure for transmitter
+
+Startup:
+
+~rst is low while recieving power stable for 250us, then ~rst goes high 
+
+write the powerup command
+
+
+
+POWER_UP command:
+	arguments: 2, refer to programming guide for detials
+
+	message (write): address 0x1 0x12 0x0f
+	command = power up
+	arg1 = no interupts + boot from memory (?) + disable RCLK + transmit mode
+	arg2 = digital inputs (I2S)
+
+	need to receive the response next, should only get the status byte (len = 1)
+
+	message (read): address, then accept the status byte 
+
+wait .5s before first tune command
+
+(skip get_rev?)
+
+
+
+
+Procedure for reciever
+
+Startup:
+
+
+
+
+
+
+
+
+
+qeuestions?
+do we ever need to power_up with patch?
+
+we want to disable all interrupts right?
+
+do we know that we are running the i2c at the right frequency?
+
+not sure if the read function will work because there is no register address.
+you just write the adress and then recieve the response bit.
+IN the case of an actual read command, such as reading the parameters or whatever,
+this would make sense. However, after every command send, you have to recieve a
+status response.
+
+do we just constantly pole the response until we get CTS=1?
+
+pre-reset? i don't think you have to do anything pre reset
+
+structure of the code: we probably won't use that many commands, so each command 
+could be its own helper function, and then processes could be made up of those functions.
+I assume we aren't gonna need to pass a bunch of different arguments so should we just
+not have parameters? For example, the way I have the power_up function written 
+right now is that it has no parameters and I just define it as a standard boot
+within the function. should we do it this way?
+
+
+
+

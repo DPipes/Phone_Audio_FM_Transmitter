@@ -25,3 +25,8 @@ void trans_init(void);
  * @param freq New frequency in 10's of kHz. 101.1 MHz = 10110d = 0x277E
  */
 void trans_freq(uint16_t freq);
+
+/**
+ * @brief boot normally, interupts off, RCLK off, transmit mode
+ */
+void power_up_std(void);
