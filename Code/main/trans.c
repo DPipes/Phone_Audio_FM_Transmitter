@@ -51,7 +51,7 @@ void trans_freq(uint16_t freq){
 
 }
 
-void power_up_std(uint8_t *response){
+void trans_power_up_std(uint8_t *response){
     /*set up the parameters*/
     uint8_t cmd = 0x1;
     uint8_t arg1 = 0x12;

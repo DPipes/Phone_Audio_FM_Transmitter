@@ -35,4 +35,4 @@ void trans_freq(uint16_t freq);
 /**
  * @brief boot normally, interupts off, RCLK off, transmit mode
  */
-void power_up_std(void);
+void trans_power_up_std(uint8_t *response);
