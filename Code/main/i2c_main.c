@@ -9,6 +9,13 @@ void i2c_register_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, size_t
     i2c_master_write_read_device(I2C_MASTER_NUM, dev_addr, &reg_addr, 1, data, len, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
 }
 
+void i2c_address_only_read(uint8_t dev_addr, uint8_t *data, size_t len)
+{
+    /* read from a device after writing only the address to the bus
+    will only work if the device doesn't nedd a register address */
+    i2c_master_read_from_device(I2C_MASTER_NUM, dev_addr, data, len, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS)
+}
+
 void i2c_register_write(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, size_t len)
 {
     /* Initialize write buffer with register address followed by data to write */
