@@ -11,6 +11,18 @@
 #define I2C_MASTER_TIMEOUT_MS       1000
 
 /**
+ * @brief write a specified nubmer of bytes to the I2C bus, then 
+ * immediately read a specified nubmer of bytes from the I2C bus
+ * 
+ * @param dev_addr Address of the I2C slave device to read from
+ * @param write_data array of bytes to write to the bus
+ * @param write_len number of bytes to write to the bus
+ * @param read_data Buffer to hold read data
+ * @param read_len Number of bytes in the read_data array
+ */
+void i2c_write_read(uint8_t dev_addr, uint8_t *write_data, size_t write_len, uint8_t *read_data, size_t read_len);
+
+/**
  * @brief Read a sequence of bytes from the I2C bus from device address and register address 
  * 
  * @param dev_addr Address of the I2C slave device to read from
@@ -22,6 +34,7 @@ void i2c_register_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data, size_t
 
 /**
  * @brief Read a sequence of bytes from the I2C bus from device address only
+ * 
  * @param dev_addr Address of the I2C slave device to read from
  * @param data Buffer to hold read data
  * @param len Number of bytes in the data array
