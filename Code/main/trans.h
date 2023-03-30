@@ -5,6 +5,12 @@
 #define TRANS_RST_PIN   8
 
 /**
+ * @brief send a command to transmitter with arguments 
+ * and recieve the response
+ */
+void trans_command(uint8_t command, uint8_t *args, size_t num_args, uint8_t *response, size_t resp_len);
+
+/**
  * @brief Write to transmitter IC
  */
 void trans_write(uint8_t reg_addr, uint8_t *data, size_t len);
