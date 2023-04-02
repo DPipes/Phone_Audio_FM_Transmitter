@@ -4,25 +4,27 @@
 
 static uint8_t trans_active = 0;
 
-void trans_command(uint8_t command, uint8_t *args, size_t num_args, uint8_t *response, size_t resp_len){
-    /* Initialize write buffer with command followed by arguments */
-    size_t write_len = num_args + 1;
-    uint8_t write_buf[write_len];
+void trans_command_full(uint8_t command, uint8_t *args, size_t num_args, uint16_t delay, uint8_t *response, size_t resp_len){
     
-    write_buf[0] = command;
-    for(int i = 0; i < num_args; i++){
-        write_buf[i + 1] = args[i];
-    }
-    /*send the command and get the response*/
-    i2c_write_read(TRANS_ADDR, write_buf, write_len, response, resp_len);
+    size_t write_len = num_args + 1;
+
+    /*send the command*/
+    i2c_register_write(TRANS_ADDR, command, args, write_len);
+
+    //delay by "delay" ms
+    vTaskDelay(delay / portTICK_PERIOD_MS);
+
+    //recieve the response
+    i2c_address_only_read(TRANS_ADDR, response, resp_len);
+
 }
 
-void trans_write(uint8_t reg_addr, uint8_t *data, size_t len){
-    i2c_register_write(TRANS_ADDR, reg_addr, data, len);
+void trans_command_write(uint8_t command, uint8_t *args, size_t num_args){
+    i2c_register_write(TRANS_ADDR, command, args, len);
 }
 
-void trans_read(uint8_t reg_addr, uint8_t *data, size_t len){
-    i2c_register_read(TRANS_ADDR, reg_addr, data, len);
+void trans_read(uint8_t *data, size_t len){
+    i2c_address_only_read(TRANS_ADDR, data, len);
 }
 
 void trans_init(void){
@@ -47,21 +49,28 @@ void trans_init(void){
     // TODO Post-reset IC configuration
 }
 
-void trans_freq(uint16_t freq){
-
-}
-
 void trans_power_up_std(uint8_t *response){
     /*set up the parameters*/
     uint8_t cmd = 0x1;
     uint8_t arg1 = 0x12;
     uint8_t arg2 = 0x0f;
     size_t num_args = 2;
-    size_t resp_len = 1;
     uint8_t args[] = {arg1,arg2};
+    
+    uint16_t delay = 112;
+
+    size_t resp_len = 1;
 
     /*send the command and get the response*/
     
-    trans_command(cmd, args, num_args, response, resp_len);
+    //not using trans_command anymore cause of delay
+    //trans_command(cmd, args, num_args, response, resp_len);
+
+    trans_command_full(cmd, args, num_args, delay, response, resp_len)
 
 }
+
+void trans_freq(uint16_t freq){
+
+}
+
