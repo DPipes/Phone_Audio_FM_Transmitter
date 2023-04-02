@@ -6,10 +6,10 @@ static uint8_t trans_active = 0;
 
 void trans_command_full(uint8_t command, uint8_t *args, size_t num_args, uint16_t delay, uint8_t *response, size_t resp_len){
     
-    size_t write_len = num_args + 1;
+    size_t write_len = num_args;
 
     /*send the command*/
-    i2c_register_write(TRANS_ADDR, command, args, write_len);
+    i2c_register_write(TRANS_ADDR, command, args, num_args);
 
     //delay by "delay" ms
     vTaskDelay(delay / portTICK_PERIOD_MS);
@@ -20,7 +20,7 @@ void trans_command_full(uint8_t command, uint8_t *args, size_t num_args, uint16_
 }
 
 void trans_command_write(uint8_t command, uint8_t *args, size_t num_args){
-    i2c_register_write(TRANS_ADDR, command, args, len);
+    i2c_register_write(TRANS_ADDR, command, args, num_args);
 }
 
 void trans_read(uint8_t *data, size_t len){
@@ -66,11 +66,23 @@ void trans_power_up_std(uint8_t *response){
     //not using trans_command anymore cause of delay
     //trans_command(cmd, args, num_args, response, resp_len);
 
-    trans_command_full(cmd, args, num_args, delay, response, resp_len)
+    trans_command_full(cmd, args, num_args, delay, response, resp_len);
 
 }
 
 void trans_freq(uint16_t freq){
+/*set up the parameters*/
+    uint8_t cmd = 0x30;
+    uint8_t arg1 = 0x0;
+    uint8_t arg2 = freq >> 8;
+    uint8_t arg3 = freq & 0xff;
+    size_t num_args = 3;
+    uint8_t args[] = {arg1,arg2,arg3};
+    
+    uint16_t delay = 101; //change this to what is appropriate
 
+    size_t resp_len = 1;
+
+    trans_command_full(cmd, args, num_args, delay, response, resp_len);
 }
 
