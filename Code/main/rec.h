@@ -5,19 +5,32 @@
 #define REC_RST_PIN     7
 
 /**
+ * @brief send a command to receiver with arguments 
+ * and recieve the response
+ */
+void rec_command_full(uint8_t command, uint8_t *args, size_t num_args, 
+uint16_t delay, uint8_t *response, size_t resp_len);
+
+/**
  * @brief Write to receiever IC
  */
-void rec_write(uint8_t reg_addr, uint8_t *data, size_t len);
+void rec_command_write(uint8_t command, uint8_t *args, size_t num_args);
 
 /**
  * @brief Read from receiever IC
  */
-void rec_read(uint8_t reg_addr, uint8_t *data, size_t len);
+void rec_read(uint8_t *data, size_t len);
 
 /**
  * @brief Initialize the receiver IC
  */
 void rec_init(void);
+
+/**
+ * @brief boot normally, interupts off, RCLK off, 
+ * recieve mode, *analog outputs?*
+ */
+void rec_power_up_std(uint8_t *response);
 
 /**
  * @brief Change receive frequency

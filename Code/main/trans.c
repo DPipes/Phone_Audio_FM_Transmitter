@@ -4,7 +4,8 @@
 
 static uint8_t trans_active = 0;
 
-void trans_command_full(uint8_t command, uint8_t *args, size_t num_args, uint16_t delay, uint8_t *response, size_t resp_len){
+void trans_command_full(uint8_t command, uint8_t *args, size_t num_args, 
+uint16_t delay, uint8_t *response, size_t resp_len){
 
     /*send the command*/
     i2c_register_write(TRANS_ADDR, command, args, num_args);
@@ -64,7 +65,6 @@ void trans_power_up_std(uint8_t *response){
     //trans_command(cmd, args, num_args, response, resp_len);
 
     trans_command_full(cmd, args, num_args, delay, response, resp_len);
-
 }
 
 void trans_set_freq_full(uint16_t freq){
@@ -192,7 +192,7 @@ void trans_set_property_write(uint16_t prop, uint16_t val, uint8_t *response){
     uint8_t arg3 = prop & 0xff;
     uint8_t arg4 = val >> 8;
     uint8_t arg5 = val & 0xff;
-    
+
     size_t num_args = 5;
     uint8_t args[] = {arg1, arg2, arg3, arg4, arg5};
 

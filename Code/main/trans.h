@@ -8,12 +8,13 @@
  * @brief send a command to transmitter with arguments 
  * and recieve the response
  */
-void trans_command_full(uint8_t command, uint8_t *args, size_t num_args, uint16_t delay, uint8_t *response, size_t resp_len);
+void trans_command_full(uint8_t command, uint8_t *args, size_t num_args, 
+uint16_t delay, uint8_t *response, size_t resp_len);
 
 /**
  * @brief Write to transmitter IC
  */
-void trans_command_write(uint8_t reg_addr, uint8_t *data, size_t len);
+void trans_command_write(uint8_t command, uint8_t *args, size_t num_args);
 
 /**
  * @brief Read from transmitter IC
