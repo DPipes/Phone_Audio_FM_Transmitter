@@ -124,7 +124,7 @@ void trans_get_int_status(uint8_t *response){
 
     size_t resp_len = 1;
 
-    trans_command_full(cmd, args, num_args, delay, response, num_args);
+    trans_command_full(cmd, args, num_args, delay, response, resp_len);
 }
 
 uint8_t trans_get_int_status(void){
@@ -141,7 +141,7 @@ uint8_t trans_get_int_status(void){
     size_t resp_len = 1;
 
     /*send the command, get the response*/
-    trans_command_full(cmd, args, num_args, delay, &response, num_args);
+    trans_command_full(cmd, args, num_args, delay, &response, resp_len);
 
     return response;
 }
@@ -160,7 +160,7 @@ void trans_tune_status(uint8_t *response){
     size_t resp_len = 8;
 
     /*send the command, get the response*/
-    trans_command_full(cmd, args, num_args, delay, &response, num_args);
+    trans_command_full(cmd, args, num_args, delay, &response, resp_len);
 }
 
 void trans_set_property(uint16_t prop, uint16_t val, uint8_t *response){
@@ -181,7 +181,7 @@ void trans_set_property(uint16_t prop, uint16_t val, uint8_t *response){
     size_t resp_len = 1;
 
     /*send the command, get the response*/
-    trans_command_full(cmd, args, num_args, delay, &response, num_args);
+    trans_command_full(cmd, args, num_args, delay, &response, resp_len);
 }
 
 void trans_set_property_write(uint16_t prop, uint16_t val){

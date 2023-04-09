@@ -70,6 +70,25 @@ uint8_t rec_get_int_status(void);
 void rec_tune_status(uint8_t *response);
 
 /**
+ * @brief sets a property, gets status byte
+ * 
+ * @param *prop the property to set
+ * @param *val the value to set the property to
+ * @param *response the response bit
+ */
+void rec_set_property(uint16_t prop, uint16_t val, uint8_t *response);
+
+/**
+ * @brief sets a property, sends command only
+ * 
+ * @param *prop the property to set
+ * @param *val the value to set the property to
+ */
+void rec_set_property_write(uint16_t prop, uint16_t val);
+
+void rec_rsq_status(uint8_t *response);
+
+/**
  * @brief Read received signal parameters
  * 
  * @param rssi Pointer to holder for received signal strength

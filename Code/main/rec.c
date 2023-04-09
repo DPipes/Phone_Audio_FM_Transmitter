@@ -22,7 +22,7 @@ void rec_command_write(uint8_t command, uint8_t *args, size_t num_args){
 }
 
 void rec_read(uint8_t *data, size_t len){
-    i2c_register_read(REC_ADDR, data, data, len);
+    i2c_address_only_read(REC_ADDR, data, len);
 }
 
 void rec_init(void){
@@ -60,11 +60,7 @@ void rec_power_up_std(uint8_t *response){
     size_t resp_len = 1;
 
     /*send the command and get the response*/
-    
-    //not using trans_command anymore cause of delay
-    //trans_command(cmd, args, num_args, response, resp_len);
-
-    trans_command_full(cmd, args, num_args, delay, response, resp_len);
+    rec_command_full(cmd, args, num_args, delay, response, resp_len);
 }
 
 
@@ -111,7 +107,7 @@ void rec_get_int_status(uint8_t *response){
 
     size_t resp_len = 1;
 
-    trans_command_full(cmd, args, num_args, delay, response, num_args);
+    rec_command_full(cmd, args, num_args, delay, response, resp_len);
 }
 
 uint8_t rec_get_int_status(void){
@@ -119,19 +115,89 @@ uint8_t rec_get_int_status(void){
     uint8_t cmd = 0x14;
     size_t num_args = 0;
     uint8_t args[] = NULL;
-    
-    uint16_t delay = 1;
 
     size_t resp_len = 1;
     uint8_t response;
 
-    trans_command_full(cmd, args, num_args, delay, &response, num_args);
+    rec_command_full(cmd, args, num_args, delay, &response, resp_len);
 
     return response;
 }
 
-rec_tune_status
+void rec_tune_status(uint8_t *response){
+    /*set up parameters*/
+    uint8_t cmd = 0x22;
+    uint8_t arg1 = 0x03;
+    uint8_t num_args = 1;
+    uint8_t args[] = {arg1};
+    
+    uint16_t delay = 1;
+
+    size_t resp_len = 8;
+
+    rec_command_full(cmd, args, num_args, delay, response, resp_len);
+}
+
+void rec_set_property(uint16_t prop, uint16_t val, uint8_t *response){
+    /*set up parameters, command and args*/
+    uint8_t cmd = 0x12;
+    uint8_t arg1 = 0x0;
+    uint8_t arg2 = prop >> 8;
+    uint8_t arg3 = prop & 0xff;
+    uint8_t arg4 = val >> 8;
+    uint8_t arg5 = val & 0xff;
+    size_t num_args = 5;
+    uint8_t args[] = {arg1, arg2, arg3, arg4, arg5};
+    
+    /*define delay*/
+    uint16_t delay = 11;
+
+    /*set up parameters, response*/
+    size_t resp_len = 1;
+
+    /*send the command, get the response*/
+    rec_command_full(cmd, args, num_args, delay, &response, resp_len);
+}
+
+void rec_set_property_write(uint16_t prop, uint16_t val){
+    /*set up parameters, command and args*/
+    uint8_t cmd = 0x12;
+    uint8_t arg1 = 0x0;
+    uint8_t arg2 = prop >> 8;
+    uint8_t arg3 = prop & 0xff;
+    uint8_t arg4 = val >> 8;
+    uint8_t arg5 = val & 0xff;
+
+    size_t num_args = 5;
+    uint8_t args[] = {arg1, arg2, arg3, arg4, arg5};
+
+    /*send the command,*/
+    rec_command_write(cmd, args, num_args);
+}
+
+void rec_rsq_status(uint8_t *response){
+    /*set up parameters, command and args*/
+    uint8_t cmd = 0x23;
+    uint8_t arg1 = 0x1;
+    size_t num_args = 1;
+    uint8_t args[] = {arg1};
+    
+    /*define delay*/
+    uint16_t delay = 1;
+
+    /*set up parameters, response*/
+    size_t resp_len = 8;
+
+    /*send the command, get the response*/
+    rec_command_full(cmd, args, num_args, delay, &response, resp_len);
+}
 
 void rec_param(uint8_t *rssi, uint8_t *snr, uint8_t *mpi){
+    uint8_t response[8];
 
+    rec_rsq_status(response);
+
+    *rssi = response[4];
+    *snr = response[5];
+    *mpi = response[6];
 }
