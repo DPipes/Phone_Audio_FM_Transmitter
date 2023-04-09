@@ -37,7 +37,37 @@ void rec_power_up_std(uint8_t *response);
  * 
  * @param freq New frequency in 10's of kHz. 101.1 MHz = 10110d = 0x277E
  */
-void rec_freq(uint16_t freq);
+void rec_set_freq_full(uint16_t freq);
+
+/**
+ * @brief Change receive frequency
+ * 
+ * @param freq New frequency in 10's of kHz. 101.1 MHz = 10110d = 0x277E
+ */
+void rec_set_freq_write(uint16_t freq);
+
+/**
+ * @brief gets the interrupt satatus, includes delay, 1ms
+ * can only be sent during powerup mode
+ * 
+ * @param *response the response bit
+ */
+void rec_get_int_status(uint8_t *response);
+
+/**
+ * @brief gets the interrupt satatus, includes delay, 1ms,
+ * returns the status byte,
+ * can only be sent during powerup mode
+ */
+uint8_t rec_get_int_status(void);
+
+/**
+ * @brief tells what frequency and power level we 
+ * are currently transmitting
+ * 
+ * @param *response the response bit
+ */
+void rec_tune_status(uint8_t *response);
 
 /**
  * @brief Read received signal parameters

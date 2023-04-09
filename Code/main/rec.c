@@ -68,10 +68,70 @@ void rec_power_up_std(uint8_t *response){
 }
 
 
-void rec_freq(uint16_t freq){
-    // TODO set new recieveing frequency
+void rec_set_freq_full(uint16_t freq){
+    /*set up the parameters*/
+    uint8_t cmd = 0x20;
+
+    uint8_t arg1 = 0x0;
+    uint8_t arg2 = freq >> 8;
+    uint8_t arg3 = freq & 0xff;
+    uint8_t arg4 = 0;
+    size_t num_args = 4; // automatic capacitor tuning
+    uint8_t args[] = {arg1,arg2,arg3,arg4};
+    
+    uint16_t delay = 61; //change this to what is appropriate
+
+    unit8_t response;
+    size_t resp_len = 1;
+
+    rec_command_full(cmd, args, num_args, delay, &response, resp_len);
 }
 
+void rec_set_freq_write(uint16_t freq){
+    /*set up the parameters*/
+    uint8_t cmd = 0x20;
+
+    uint8_t arg1 = 0x0;
+    uint8_t arg2 = freq >> 8;
+    uint8_t arg3 = freq & 0xff;
+    uint8_t arg4 = 0;
+    size_t num_args = 4; // automatic capacitor tuning
+    uint8_t args[] = {arg1,arg2,arg3,arg4};
+
+    rec_command_write(cmd, args, num_args);
+}
+
+void rec_get_int_status(uint8_t *response){
+    /*set up parameters*/
+    uint8_t cmd = 0x14;
+    uint8_t num_args = 0;
+    uint8_t args[] = NULL;
+    
+    uint16_t delay = 1;
+
+    size_t resp_len = 1;
+
+    trans_command_full(cmd, args, num_args, delay, response, num_args);
+}
+
+uint8_t rec_get_int_status(void){
+    /*set up parameters*/
+    uint8_t cmd = 0x14;
+    size_t num_args = 0;
+    uint8_t args[] = NULL;
+    
+    uint16_t delay = 1;
+
+    size_t resp_len = 1;
+    uint8_t response;
+
+    trans_command_full(cmd, args, num_args, delay, &response, num_args);
+
+    return response;
+}
+
+rec_tune_status
+
 void rec_param(uint8_t *rssi, uint8_t *snr, uint8_t *mpi){
-    // TODO recieve signal strength parameters
+
 }

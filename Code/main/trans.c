@@ -184,7 +184,7 @@ void trans_set_property(uint16_t prop, uint16_t val, uint8_t *response){
     trans_command_full(cmd, args, num_args, delay, &response, num_args);
 }
 
-void trans_set_property_write(uint16_t prop, uint16_t val, uint8_t *response){
+void trans_set_property_write(uint16_t prop, uint16_t val){
     /*set up parameters, command and args*/
     uint8_t cmd = 0x12;
     uint8_t arg1 = 0x0;
