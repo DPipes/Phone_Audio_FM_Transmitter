@@ -44,13 +44,17 @@ void trans_init(void){
     trans_active = 1;
     gpio_set_level(TRANS_RST_PIN, trans_active);
 
-    // TODO Post-reset IC configuration
+    vTaskDelay(1 / portTICK_PERIOD_MS);
+
+    uint8_t response;
+
+    trans_power_up_std(&response);
 }
 
 void trans_power_up_std(uint8_t *response){
     /*set up the parameters*/
     uint8_t cmd = 0x1;
-    uint8_t arg1 = 0x12;
+    uint8_t arg1 = 0x02;
     uint8_t arg2 = 0x0f;
     size_t num_args = 2;
     uint8_t args[] = {arg1,arg2};
@@ -114,24 +118,24 @@ void trans_set_power_write(uint8_t power){
     trans_command_write(cmd, args, num_args);
 }
 
-void trans_get_int_status(uint8_t *response){
-    /*set up parameters*/
-    uint8_t cmd = 0x14;
-    size_t num_args = 0;
-    uint8_t args[] = NULL;
+// void trans_get_int_status(uint8_t *response){
+//     /*set up parameters*/
+//     uint8_t cmd = 0x14;
+//     size_t num_args = 0;
+//     uint8_t args[] = NULL;
     
-    uint16_t delay = 1;
+//     uint16_t delay = 1;
 
-    size_t resp_len = 1;
+//     size_t resp_len = 1;
 
-    trans_command_full(cmd, args, num_args, delay, response, resp_len);
-}
+//     trans_command_full(cmd, args, num_args, delay, response, resp_len);
+// }
 
 uint8_t trans_get_int_status(void){
     /*set up parameters, command and args*/
     uint8_t cmd = 0x14;
     size_t num_args = 0;
-    uint8_t args[] = NULL;
+    uint8_t args;
     
     /*define delay*/
     uint16_t delay = 1;
@@ -141,7 +145,7 @@ uint8_t trans_get_int_status(void){
     size_t resp_len = 1;
 
     /*send the command, get the response*/
-    trans_command_full(cmd, args, num_args, delay, &response, resp_len);
+    trans_command_full(cmd, &args, num_args, delay, &response, resp_len);
 
     return response;
 }

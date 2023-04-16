@@ -44,17 +44,22 @@ void rec_init(void){
     rec_active = 1;
     gpio_set_level(REC_RST_PIN, rec_active);
 
-    // TODO Post-reset IC configuration
+    vTaskDelay(1 / portTICK_PERIOD_MS);
+    uint8_t response;
+
+    rec_power_up_std(&response);
+
 }
 
 void rec_power_up_std(uint8_t *response){
     /*set up the parameters*/
     uint8_t cmd = 0x1;
-    uint8_t arg1 = 0x10;
+    uint8_t arg1 = 0x00;
     uint8_t arg2 = 0x05;
     size_t num_args = 2;
     uint8_t args[] = {arg1,arg2};
     
+    ///need longer delay if using crystal
     uint16_t delay = 112;
 
     size_t resp_len = 1;
@@ -97,29 +102,29 @@ void rec_set_freq_write(uint16_t freq){
     rec_command_write(cmd, args, num_args);
 }
 
-void rec_get_int_status(uint8_t *response){
-    /*set up parameters*/
-    uint8_t cmd = 0x14;
-    uint8_t num_args = 0;
-    uint8_t args[] = NULL;
+// void rec_get_int_status(uint8_t *response){
+//     /*set up parameters*/
+//     uint8_t cmd = 0x14;
+//     uint8_t num_args = 0;
+//     uint8_t args;
     
-    uint16_t delay = 1;
+//     uint16_t delay = 1;
 
-    size_t resp_len = 1;
+//     size_t resp_len = 1;
 
-    rec_command_full(cmd, args, num_args, delay, response, resp_len);
-}
+//     rec_command_full(cmd, &args, num_args, delay, response, resp_len);
+// }
 
 uint8_t rec_get_int_status(void){
     /*set up parameters*/
     uint8_t cmd = 0x14;
     size_t num_args = 0;
-    uint8_t args[] = NULL;
+    uint8_t args;
 
     size_t resp_len = 1;
     uint8_t response;
 
-    rec_command_full(cmd, args, num_args, delay, &response, resp_len);
+    rec_command_full(cmd, &args, num_args, delay, &response, resp_len);
 
     return response;
 }
@@ -136,6 +141,33 @@ void rec_tune_status(uint8_t *response){
     size_t resp_len = 8;
 
     rec_command_full(cmd, args, num_args, delay, response, resp_len);
+}
+
+void rec_rsq_status(uint8_t *response){
+    /*set up parameters, command and args*/
+    uint8_t cmd = 0x23;
+    uint8_t arg1 = 0x1;
+    size_t num_args = 1;
+    uint8_t args[] = {arg1};
+    
+    /*define delay*/
+    uint16_t delay = 1;
+
+    /*set up parameters, response*/
+    size_t resp_len = 8;
+
+    /*send the command, get the response*/
+    rec_command_full(cmd, args, num_args, delay, &response, resp_len);
+}
+
+void rec_param(uint8_t *rssi, uint8_t *snr, uint8_t *mpi){
+    uint8_t response[8];
+
+    rec_rsq_status(response);
+
+    *rssi = response[4];
+    *snr = response[5];
+    *mpi = response[6];
 }
 
 void rec_set_property(uint16_t prop, uint16_t val, uint8_t *response){
@@ -175,29 +207,18 @@ void rec_set_property_write(uint16_t prop, uint16_t val){
     rec_command_write(cmd, args, num_args);
 }
 
-void rec_rsq_status(uint8_t *response){
-    /*set up parameters, command and args*/
-    uint8_t cmd = 0x23;
-    uint8_t arg1 = 0x1;
-    size_t num_args = 1;
-    uint8_t args[] = {arg1};
-    
-    /*define delay*/
-    uint16_t delay = 1;
+void rec_set_refclk_freq(uint16_t freq){
+    uint16_t prop = 0x0201;
 
-    /*set up parameters, response*/
-    size_t resp_len = 8;
+    rec_set_property_write(prop,freq);
 
-    /*send the command, get the response*/
-    rec_command_full(cmd, args, num_args, delay, &response, resp_len);
+    vTaskDelay(11 / portTICK_PERIOD_MS);
 }
 
-void rec_param(uint8_t *rssi, uint8_t *snr, uint8_t *mpi){
-    uint8_t response[8];
+void rec_set_refclk_prescale(bool){
+    uint16_t prop = 0x0202;
 
-    rec_rsq_status(response);
+    rec_set_property_write(prop,freq);
 
-    *rssi = response[4];
-    *snr = response[5];
-    *mpi = response[6];
+    vTaskDelay(11 / portTICK_PERIOD_MS);
 }

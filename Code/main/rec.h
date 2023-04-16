@@ -52,7 +52,7 @@ void rec_set_freq_write(uint16_t freq);
  * 
  * @param *response the response bit
  */
-void rec_get_int_status(uint8_t *response);
+//void rec_get_int_status(uint8_t *response);
 
 /**
  * @brief gets the interrupt satatus, includes delay, 1ms,
@@ -68,6 +68,17 @@ uint8_t rec_get_int_status(void);
  * @param *response the response bit
  */
 void rec_tune_status(uint8_t *response);
+
+void rec_rsq_status(uint8_t *response);
+
+/**
+ * @brief Read received signal parameters
+ * 
+ * @param rssi Pointer to holder for received signal strength
+ * @param snr Pointer to holder for received signal to noise ratio
+ * @param mpi Pointer to holder for received multipath interference
+ */
+void rec_param(uint8_t *rssi, uint8_t *snr, uint8_t *mpi);
 
 /**
  * @brief sets a property, gets status byte
@@ -86,13 +97,19 @@ void rec_set_property(uint16_t prop, uint16_t val, uint8_t *response);
  */
 void rec_set_property_write(uint16_t prop, uint16_t val);
 
-void rec_rsq_status(uint8_t *response);
+/**
+ * @brief sets the frequency of the reference clock at rclk input
+ * 
+ * @param *freq the frequency in hz
+ */
+void rec_set_refclk_freq(uint16_t freq);
 
 /**
- * @brief Read received signal parameters
+ * @brief sets the prescale value of reference clock
+ * reference clock frquency is the freuqncy at the rclk input
+ * divided by the prescale fvalue
  * 
- * @param rssi Pointer to holder for received signal strength
- * @param snr Pointer to holder for received signal to noise ratio
- * @param mpi Pointer to holder for received multipath interference
+ * @param *freq the frequency in hz
+ * @param *rclk 0 if ussing the rclk pin, 1 if using the dclk pin
  */
-void rec_param(uint8_t *rssi, uint8_t *snr, uint8_t *mpi);
+void rec_set_refclk_prescale(bool rclk, uint16_t freq);

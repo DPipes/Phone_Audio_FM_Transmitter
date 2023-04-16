@@ -58,7 +58,7 @@ void trans_set_power_write(uint8_t power);
  * 
  * @param *response the response bit
  */
-void trans_get_int_status(uint8_t *response);
+//void trans_get_int_status(uint8_t *response);
 
 /**
  * @brief gets the interrupt satatus, includes delay, 1ms,
