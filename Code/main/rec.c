@@ -82,7 +82,7 @@ void rec_set_freq_full(uint16_t freq){
     
     uint16_t delay = 61; //change this to what is appropriate
 
-    unit8_t response;
+    uint8_t response;
     size_t resp_len = 1;
 
     rec_command_full(cmd, args, num_args, delay, &response, resp_len);
@@ -123,6 +123,7 @@ uint8_t rec_get_int_status(void){
 
     size_t resp_len = 1;
     uint8_t response;
+    uint16_t delay = 1;
 
     rec_command_full(cmd, &args, num_args, delay, &response, resp_len);
 

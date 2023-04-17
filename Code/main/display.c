@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "driver/gpio.h"
 #include "i2c_main.h"
 #include "display.h"
 
@@ -39,6 +40,12 @@ void disp_init(void){
     vTaskDelay(10 / portTICK_PERIOD_MS);
     disp_write(0x00, val + 2, 7);
 
+    gpio_reset_pin(BKLIT_PIN);
+    gpio_set_direction(BKLIT_PIN, GPIO_MODE_OUTPUT);
+    printf("pin not set");
+
+    gpio_set_level(BKLIT_PIN, 1);
+    printf("set pin");
     // TODO Post-reset display configuration
 }
 

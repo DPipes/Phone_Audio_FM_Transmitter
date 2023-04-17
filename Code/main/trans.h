@@ -2,7 +2,7 @@
 #include "i2c_main.h"
 
 #define TRANS_ADDR      0x63
-#define TRANS_RST_PIN   8
+#define TRANS_RST_PIN   26
 
 /**
  * @brief send a command to transmitter with arguments 

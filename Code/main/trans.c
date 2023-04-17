@@ -50,15 +50,14 @@ void trans_init(void){
 
     trans_power_up_std(&response); //includes delay
 
+    /*
     uint16_t ref_freq;
     uint16_t sample_rate;
     
     trans_set_refclk_freq(ref_freq);
     trans_Dig_input_format();
     trans_input_sample_rate(sample_rate);
-
-
-
+    */
 }
 
 void trans_power_up_std(uint8_t *response){
@@ -93,7 +92,7 @@ void trans_set_freq_full(uint16_t freq){
     
     uint16_t delay = 101; //change this to what is appropriate
 
-    unit8_t response;
+    uint8_t response;
     size_t resp_len = 1;
 
     trans_command_full(cmd, args, num_args, delay, &response, resp_len);
@@ -217,7 +216,7 @@ void trans_set_property_write(uint16_t prop, uint16_t val){
 void trans_set_refclk_freq(uint16_t freq){
     uint16_t prop = 0x0201;
 
-    rec_set_property_write(prop,freq);
+    trans_set_property_write(prop,freq);
 
     vTaskDelay(11 / portTICK_PERIOD_MS);
 }
@@ -232,7 +231,7 @@ void trans_Dig_input_format(void){
 
     uint16_t format = (dclk << 7) + (dig_mode << 3) + (audio_mode << 2) + s_precision;
 
-    rec_set_property_write(prop,format);
+    trans_set_property_write(prop,format);
 
     vTaskDelay(11 / portTICK_PERIOD_MS);
 }
@@ -240,7 +239,7 @@ void trans_Dig_input_format(void){
 void trans_input_sample_rate(uint16_t rate){
     uint16_t prop = 0x0103;
     
-    rec_set_property_write(prop,rate);
+    trans_set_property_write(prop,rate);
 
     vTaskDelay(11 / portTICK_PERIOD_MS);
 }

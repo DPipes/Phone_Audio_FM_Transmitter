@@ -2,7 +2,7 @@
 #include "i2c_main.h"
 
 #define REC_ADDR        0x11
-#define REC_RST_PIN     7
+#define REC_RST_PIN     27
 
 /**
  * @brief send a command to receiver with arguments 

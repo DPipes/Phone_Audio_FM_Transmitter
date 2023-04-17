@@ -2,10 +2,10 @@
 #include "driver/gpio.h"
 #include "i2c_main.h"
 
-#define CHANGE_FREQ_PIN 1
-#define PLAY_PAUSE_PIN  2
-#define PREV_PIN        4
-#define NEXT_PIN        5
+#define CHANGE_FREQ_PIN 19
+#define PLAY_PAUSE_PIN  18
+#define PREV_PIN        21
+#define NEXT_PIN        25
 
 /**
  * @brief Initialize the user input pins

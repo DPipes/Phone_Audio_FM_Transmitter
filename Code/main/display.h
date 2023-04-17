@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include "driver/gpio.h"
 #include "i2c_main.h"
 
 #define DISP_ADDR       0x3C
-#define DISP_RST_PIN    6
+#define DISP_RST_PIN    4
 #define MAX_CHARACTERS  20
+#define BKLIT_PIN		23
 
 #define GENERIC_REG     0x00
 #define Co_REG          0x80

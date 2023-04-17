@@ -19,10 +19,10 @@ void app_main(void)
     /* Initialize */
     i2c_init();
     printf("I2C initialized successfully");
-    trans_init();
-    printf("Transmitter initialized successfully");
-    rec_init();
-    printf("Receiver initialized successfully");
+    //trans_init();
+    //printf("Transmitter initialized successfully");
+    //rec_init();
+    //printf("Receiver initialized successfully");
     blt_init();
     printf("Bluetooth initialized successfully");
     input_init();
@@ -43,6 +43,9 @@ void app_main(void)
     /* For testing */
     uint8_t text[5] = {'w', 'o', 'r', 'd', 's'};
     vTaskDelay(10 / portTICK_PERIOD_MS);
+
+
+
 
     /* Main loop */
     while (true) {
