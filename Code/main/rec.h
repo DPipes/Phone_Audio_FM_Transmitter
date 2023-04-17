@@ -104,12 +104,12 @@ void rec_set_property_write(uint16_t prop, uint16_t val);
  */
 void rec_set_refclk_freq(uint16_t freq);
 
-/**
- * @brief sets the prescale value of reference clock
- * reference clock frquency is the freuqncy at the rclk input
- * divided by the prescale fvalue
- * 
- * @param *freq the frequency in hz
- * @param *rclk 0 if ussing the rclk pin, 1 if using the dclk pin
- */
-void rec_set_refclk_prescale(bool rclk, uint16_t freq);
+// /**
+//  * @brief sets the prescale value of reference clock
+//  * reference clock frquency is the freuqncy at the rclk input
+//  * divided by the prescale fvalue
+//  * 
+//  * @param *freq the frequency in hz
+//  * @param *rclk 0 if ussing the rclk pin, 1 if using the dclk pin
+//  */
+// void rec_set_refclk_prescale(bool rclk, uint16_t freq);

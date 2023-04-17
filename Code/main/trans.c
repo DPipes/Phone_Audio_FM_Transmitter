@@ -48,7 +48,17 @@ void trans_init(void){
 
     uint8_t response;
 
-    trans_power_up_std(&response);
+    trans_power_up_std(&response); //includes delay
+
+    uint16_t ref_freq;
+    uint16_t sample_rate;
+    
+    trans_set_refclk_freq(ref_freq);
+    trans_Dig_input_format();
+    trans_input_sample_rate(sample_rate);
+
+
+
 }
 
 void trans_power_up_std(uint8_t *response){
@@ -164,7 +174,7 @@ void trans_tune_status(uint8_t *response){
     size_t resp_len = 8;
 
     /*send the command, get the response*/
-    trans_command_full(cmd, args, num_args, delay, &response, resp_len);
+    trans_command_full(cmd, args, num_args, delay, response, resp_len);
 }
 
 void trans_set_property(uint16_t prop, uint16_t val, uint8_t *response){
@@ -185,7 +195,7 @@ void trans_set_property(uint16_t prop, uint16_t val, uint8_t *response){
     size_t resp_len = 1;
 
     /*send the command, get the response*/
-    trans_command_full(cmd, args, num_args, delay, &response, resp_len);
+    trans_command_full(cmd, args, num_args, delay, response, resp_len);
 }
 
 void trans_set_property_write(uint16_t prop, uint16_t val){
@@ -203,3 +213,35 @@ void trans_set_property_write(uint16_t prop, uint16_t val){
     /*send the command,*/
     trans_command_write(cmd, args, num_args);
 }
+
+void trans_set_refclk_freq(uint16_t freq){
+    uint16_t prop = 0x0201;
+
+    rec_set_property_write(prop,freq);
+
+    vTaskDelay(11 / portTICK_PERIOD_MS);
+}
+
+void trans_Dig_input_format(void){
+    uint16_t prop = 0x0101;
+    
+    uint8_t dclk = 0; // sample on rising edge (default)
+    uint8_t dig_mode = 0x1; //I2S mode
+    uint8_t audio_mode = 0; //stereo mode (default)
+    uint8_t s_precision = 0x6; //6 bits of precision (defualt)
+
+    uint16_t format = (dclk << 7) + (dig_mode << 3) + (audio_mode << 2) + s_precision;
+
+    rec_set_property_write(prop,format);
+
+    vTaskDelay(11 / portTICK_PERIOD_MS);
+}
+
+void trans_input_sample_rate(uint16_t rate){
+    uint16_t prop = 0x0103;
+    
+    rec_set_property_write(prop,rate);
+
+    vTaskDelay(11 / portTICK_PERIOD_MS);
+}
+

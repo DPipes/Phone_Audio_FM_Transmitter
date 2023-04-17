@@ -157,7 +157,7 @@ void rec_rsq_status(uint8_t *response){
     size_t resp_len = 8;
 
     /*send the command, get the response*/
-    rec_command_full(cmd, args, num_args, delay, &response, resp_len);
+    rec_command_full(cmd, args, num_args, delay, response, resp_len);
 }
 
 void rec_param(uint8_t *rssi, uint8_t *snr, uint8_t *mpi){
@@ -188,7 +188,7 @@ void rec_set_property(uint16_t prop, uint16_t val, uint8_t *response){
     size_t resp_len = 1;
 
     /*send the command, get the response*/
-    rec_command_full(cmd, args, num_args, delay, &response, resp_len);
+    rec_command_full(cmd, args, num_args, delay, response, resp_len);
 }
 
 void rec_set_property_write(uint16_t prop, uint16_t val){
@@ -215,10 +215,10 @@ void rec_set_refclk_freq(uint16_t freq){
     vTaskDelay(11 / portTICK_PERIOD_MS);
 }
 
-void rec_set_refclk_prescale(bool){
-    uint16_t prop = 0x0202;
+// void rec_set_refclk_prescale(bool){
+//     uint16_t prop = 0x0202;
 
-    rec_set_property_write(prop,freq);
+//     rec_set_property_write(prop,freq);
 
-    vTaskDelay(11 / portTICK_PERIOD_MS);
-}
+//     vTaskDelay(11 / portTICK_PERIOD_MS);
+// }

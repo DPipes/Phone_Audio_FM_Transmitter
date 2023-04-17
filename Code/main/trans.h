@@ -91,3 +91,23 @@ void trans_set_property(uint16_t prop, uint16_t val, uint8_t *response);
  * @param *val the value to set the property to
  */
 void trans_set_property_write(uint16_t prop, uint16_t val);
+
+/**
+ * @brief sets the frequency of the reference clock at rclk input
+ * 
+ * @param *freq the frequency in hz
+ */
+void trans_set_refclk_freq(uint16_t freq);
+
+/**
+ * @brief sets the format of the digital input
+ */
+void trans_Dig_input_format(void);
+
+/**
+ * @brief sets the input sample rate 
+ * (send tx_tun_freq First)
+ * 
+ * @param *rate, the sample rate in hz
+ */
+void trans_input_sample_rate(uint16_t rate);
