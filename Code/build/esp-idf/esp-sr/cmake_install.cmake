@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/wozni/esp/esp-adf/components/esp-sr
+# Install script for directory: C:/ece445/esp-adf/components/esp-sr
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

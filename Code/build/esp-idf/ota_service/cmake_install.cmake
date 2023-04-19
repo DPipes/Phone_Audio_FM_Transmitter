@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/wozni/esp/esp-adf/components/ota_service
+# Install script for directory: C:/ece445/esp-adf/components/ota_service
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

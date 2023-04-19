@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 file(MAKE_DIRECTORY
-  "C:/Espressif/frameworks/esp-idf-v4.4.4/components/bootloader/subproject"
+  "C:/Espressif/frameworks/esp-idf-v4.4/components/bootloader/subproject"
   "C:/ece445/Phone_Audio_FM_Transmitter/Code/build/bootloader"
   "C:/ece445/Phone_Audio_FM_Transmitter/Code/build/bootloader-prefix"
   "C:/ece445/Phone_Audio_FM_Transmitter/Code/build/bootloader-prefix/tmp"

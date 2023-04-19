@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/wozni/esp/esp-adf/components/esp_peripherals
+# Install script for directory: C:/ece445/esp-adf/components/esp_peripherals
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
