@@ -3,6 +3,10 @@
 
 #define TRANS_ADDR      0x63
 #define TRANS_RST_PIN   26
+#define DCLK 0x00			// sample on rising edge (default)
+#define DIG_MODE 0x01		//I2S mode
+#define AUDIO_MODE 0x00		//stereo mode (default)
+#define S_PRECISION 0x06	//6 bits of precision (default)
 
 /**
  * @brief send a command to transmitter with arguments 

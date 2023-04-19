@@ -1,8 +1,23 @@
+/*#####################################################################
+#######################################################################
+In order for everything to work, some values need to be set inside this file:
+
+ref_freq is the reference frequency, set if not default and uncomment lines in init()
+
+sample
+
+#######################################################################
+#######################################################################
+*/
+
+
 #include <stdio.h>
 #include "i2c_main.h"
 #include "trans.h"
 
 static uint8_t trans_active = 0;
+//static uint16_t ref_freq;  // if not default, set and uncomment line in init()
+//static uint16_t sample_rate; // set for use of digital in
 
 void trans_command_full(uint8_t command, uint8_t *args, size_t num_args, 
 uint16_t delay, uint8_t *response, size_t resp_len){
@@ -51,11 +66,8 @@ void trans_init(void){
     trans_power_up_std(&response); //includes delay
 
     /*
-    uint16_t ref_freq;
-    uint16_t sample_rate;
-    
     trans_set_refclk_freq(ref_freq);
-    trans_Dig_input_format();
+    trans_Dig_input_format(); //make sure to set the stuff in the input format
     trans_input_sample_rate(sample_rate);
     */
 }
@@ -223,13 +235,8 @@ void trans_set_refclk_freq(uint16_t freq){
 
 void trans_Dig_input_format(void){
     uint16_t prop = 0x0101;
-    
-    uint8_t dclk = 0; // sample on rising edge (default)
-    uint8_t dig_mode = 0x1; //I2S mode
-    uint8_t audio_mode = 0; //stereo mode (default)
-    uint8_t s_precision = 0x6; //6 bits of precision (defualt)
 
-    uint16_t format = (dclk << 7) + (dig_mode << 3) + (audio_mode << 2) + s_precision;
+    uint16_t format = (DCLK << 7) + (DIG_MODE << 3) + (AUDIO_MODE << 2) + S_PRECISION;
 
     trans_set_property_write(prop,format);
 

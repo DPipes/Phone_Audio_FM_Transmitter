@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "driver/gpio.h"
 #include "i2c_main.h"
 #include "display.h"
@@ -42,10 +43,9 @@ void disp_init(void){
 
     gpio_reset_pin(BKLIT_PIN);
     gpio_set_direction(BKLIT_PIN, GPIO_MODE_OUTPUT);
-    printf("pin not set");
-
     gpio_set_level(BKLIT_PIN, 1);
-    printf("set pin");
+
+    vTaskDelay(10 / portTICK_PERIOD_MS);
     // TODO Post-reset display configuration
 }
 
@@ -54,7 +54,32 @@ void disp_clear(void){
     disp_write(GENERIC_REG, &data, 1);
 }
 
-void disp_text(unsigned char *text, uint8_t len, uint8_t row){
+int freq_to_string(uint16_t freq, char* text) {
+    int len, k;
+    int x = 0;
+    char str[5];
+
+    freq /= 10;
+    k = freq % 10;
+    freq /= 10;
+
+    sprintf(str, "%d", freq);
+    text[0] = str[0];
+    text[1] = str[1];
+    if (freq > 99) {
+        text[2] = str[2];
+        len = 5;
+        x = 1;
+    }
+    else len = 4;
+    text[2 + x] = '.';
+    sprintf(str, "%d", k);
+    text[3 + x] = str[0];
+
+    return len;
+}
+
+void disp_text(char *text, uint8_t len, uint8_t row){
     int offset = (MAX_CHARACTERS - len)/2;
     
     uint8_t data[MAX_CHARACTERS];

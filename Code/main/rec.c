@@ -48,12 +48,18 @@ void rec_init(void){
     uint8_t response;
 
     rec_power_up_std(&response);
+    printf("powerup: %x\n", response);
 
+    rec_set_property_write(0x1107, 1);
+    vTaskDelay(11 / portTICK_PERIOD_MS);
+
+    /*uint16_t ref_freq = 0;
+    rec_set_refclk_freq(ref_freq);*/
 }
 
 void rec_power_up_std(uint8_t *response){
     /*set up the parameters*/
-    uint8_t cmd = 0x1;
+    uint8_t cmd = 0x01;
     uint8_t arg1 = 0x00;
     uint8_t arg2 = 0x05;
     size_t num_args = 2;

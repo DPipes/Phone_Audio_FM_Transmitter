@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "driver/gpio.h"
 #include "i2c_main.h"
 
@@ -85,10 +86,15 @@ void disp_init(void);
 void disp_clear(void);
 
 /**
+ * @brief Convert an int to a frequency string and return the length of the string
+ */
+int freq_to_string(uint16_t freq, char* text);
+
+/**
  * @brief Clear and write new text to selected row
  * 
  * @param text String of text to write. 40 characters max
  * @param len Number of characters in string
  * @param row Row to display text in
  */
-void disp_text(unsigned char *text, uint8_t len, uint8_t row);
+void disp_text(char *text, uint8_t len, uint8_t row);
