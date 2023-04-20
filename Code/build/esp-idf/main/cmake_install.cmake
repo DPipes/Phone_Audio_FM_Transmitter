@@ -1,4 +1,4 @@
-# Install script for directory: C:/ece445/Phone_Audio_FM_Transmitter/Code/main
+# Install script for directory: C:/Users/dpipe/OneDrive/School/ECE445/Phone_Audio_FM_Transmitter/Code/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

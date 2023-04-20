@@ -1,4 +1,4 @@
-# Install script for directory: C:/ece445/esp-adf/components/esp-adf-libs
+# Install script for directory: C:/Users/dpipe/esp/esp-adf/components/esp-adf-libs
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

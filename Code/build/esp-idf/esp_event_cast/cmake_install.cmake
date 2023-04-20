@@ -1,4 +1,4 @@
-# Install script for directory: C:/ece445/esp-adf/components/esp_event_cast
+# Install script for directory: C:/Users/dpipe/esp/esp-adf/components/esp_event_cast
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

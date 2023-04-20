@@ -1,4 +1,4 @@
-/* * Data converted from C:/ece445/esp-adf/components/dueros_service/duer_profile
+/* * Data converted from C:/Users/dpipe/esp/esp-adf/components/dueros_service/duer_profile
  */
 .data
 .section .rodata.embedded

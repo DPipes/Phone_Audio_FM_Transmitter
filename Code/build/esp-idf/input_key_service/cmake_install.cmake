@@ -1,4 +1,4 @@
-# Install script for directory: C:/ece445/esp-adf/components/input_key_service
+# Install script for directory: C:/Users/dpipe/esp/esp-adf/components/input_key_service
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

@@ -1,4 +1,4 @@
-# Install script for directory: C:/ece445/esp-adf/components/clouds
+# Install script for directory: C:/Users/dpipe/esp/esp-adf/components/clouds
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

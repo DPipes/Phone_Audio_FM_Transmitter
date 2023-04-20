@@ -98,7 +98,7 @@ void blt_init(void) {
 uint8_t check_buttons(void) {
     audio_event_iface_msg_t msg;
     // Check for events
-    audio_event_iface_listen(event_handle, &msg, portMAX_DELAY);
+    audio_event_iface_listen(event_handle, &msg, 0);
     if((int)msg.source_type == PERIPH_ID_BUTTON && (int)msg.cmd == PERIPH_BUTTON_PRESSED) {
         // Button pressed 
         // ESP_LOGI(TAG, "Button pressed: gpio_num %d", (int)msg.data, (int)msg.cmd);
@@ -106,23 +106,45 @@ uint8_t check_buttons(void) {
             case AVRC_PLAY_PAUSE_PIN: 
                 if(playback_status == ESP_AVRC_PLAYBACK_PLAYING) {
                     periph_bluetooth_pause(bt_periph);
-                    // ESP_LOGI(TAG, "AVRC playback: pause");
+                    ESP_LOGI(TAG, "AVRC playback: pause");
                 } else if(playback_status == ESP_AVRC_PLAYBACK_PAUSED) {
                     periph_bluetooth_play(bt_periph);
-                    // ESP_LOGI(TAG, "AVRC playback: start");
+                    ESP_LOGI(TAG, "AVRC playback: start");
                 }
                 break;
             case AVRC_NEXT_PIN:
                 periph_bluetooth_next(bt_periph);
-                // ESP_LOGI(TAG, "AVRC playback: next track");
+                ESP_LOGI(TAG, "AVRC playback: next track");
                 break;
             case AVRC_PREV_PIN:
                 periph_bluetooth_prev(bt_periph);
-                // ESP_LOGI(TAG, "AVRC playback: previous track");
+                ESP_LOGI(TAG, "AVRC playback: previous track");
                 break;
             default:
                 break; 
         }
+        return (int)msg.data;
     }
-    return (int)msg.data;
+    return 0;
+}
+
+void blt_play_pause(void) {
+    if (playback_status == ESP_AVRC_PLAYBACK_PLAYING) {
+        periph_bluetooth_pause(bt_periph);
+        ESP_LOGI(TAG, "AVRC playback: pause");
+    }
+    else if (playback_status == ESP_AVRC_PLAYBACK_PAUSED) {
+        periph_bluetooth_play(bt_periph);
+        ESP_LOGI(TAG, "AVRC playback: start");
+    }
+}
+
+void blt_next(void) {
+    periph_bluetooth_next(bt_periph);
+    ESP_LOGI(TAG, "AVRC playback: next track");
+}
+
+void blt_prev(void) {
+    periph_bluetooth_prev(bt_periph);
+    ESP_LOGI(TAG, "AVRC playback: previous track");
 }

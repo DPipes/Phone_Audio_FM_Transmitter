@@ -2050,7 +2050,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_playlist_
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = C:\Espressif\tools\cmake\3.23.1\bin\cmake.exe --regenerate-during-build -SC:\ece445\Phone_Audio_FM_Transmitter\Code -BC:\ece445\Phone_Audio_FM_Transmitter\Code\build
+  command = C:\Espressif\tools\cmake\3.23.1\bin\cmake.exe --regenerate-during-build -SC:\Users\dpipe\OneDrive\School\ECE445\Phone_Audio_FM_Transmitter\Code -BC:\Users\dpipe\OneDrive\School\ECE445\Phone_Audio_FM_Transmitter\Code\build
   description = Re-running CMake...
   generator = 1
 

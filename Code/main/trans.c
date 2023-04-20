@@ -73,7 +73,6 @@ void trans_init(void){
     trans_set_property_write(0x2101, 0x1aa9);
     trans_set_property_write(0x2102, 0x02a3);
     trans_set_power_write(0x73); // 115dBm power
-    trans_set_freq_full(10130);
     trans_set_property_write(0x2100, 0x3);
     trans_set_property_write(0x0103, 44100);
     trans_set_property_write(0x0101, 0);
