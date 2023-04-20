@@ -18,6 +18,9 @@
 CCACHE_ENABLE:UNINITIALIZED=0
 
 //Path to a program.
+CCACHE_FOUND:FILEPATH=C:/Espressif/tools/ccache/4.3/ccache-4.3-windows-64/ccache.exe
+
+//Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=C:/Espressif/tools/xtensa-esp32-elf/esp-2021r2-patch5-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-addr2line.exe
 
 //Path to a program.

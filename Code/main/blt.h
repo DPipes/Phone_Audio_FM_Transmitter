@@ -27,10 +27,17 @@
 #define TAG             "BT"
 #define DEVICE_NAME     "ECE445 FM Transmitter"
 
-#define SD_PIN          GPIO_NUM_25
-#define WS_PIN          GPIO_NUM_33
-#define BCLK_PIN        GPIO_NUM_32
-#define CTRL_PINS       (GPIO_SEL_18|GPIO_SEL_21|GPIO_SEL_16)
+#define SD_PIN              GPIO_NUM_25
+#define WS_PIN              GPIO_NUM_33
+#define BCLK_PIN            GPIO_NUM_32
+
+#define AVRC_PLAY_PAUSE_PIN GPIO_NUM_18
+#define AVRC_NEXT_PIN       GPIO_NUM_16
+#define AVRC_PREV_PIN       GPIO_NUM_21
+#define CHANGE_FREQ_PIN     GPIO_NUM_19
+#define CTRL_PINS       (GPIO_SEL_18|GPIO_SEL_21|GPIO_SEL_16|GPIO_SEL_19)
+
+
 
 /**
  * @brief Callback function for the Bluetooth system
@@ -48,7 +55,9 @@ void blt_init(void);
 /**
  * @brief Sets up GPIO pins specified in "blt.h" as buttons and sends AVRC 
  * commands to the Bluetooth device when pressed.
+ * 
+ * @return uin8_t The GPIO number of the button pressed
  */
-void check_buttons(void);
+uint8_t check_buttons(void);
 
 #endif

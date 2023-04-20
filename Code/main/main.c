@@ -41,7 +41,7 @@ void app_main(void)
     int len;
 
     uint16_t new_freq = 0;
-    uint8_t new_rssi = 0;
+    uint8_t new_rssi = 200;
 
     //tesing the transmitter and reciever
     uint8_t trans_tune_response[8] = {};
@@ -74,17 +74,17 @@ void app_main(void)
         // next_ = gpio_get_level(NEXT_PIN);
 
         /* On button press perform functions */
-        if (!freq_ && freq) {
+        // if (!freq_ && freq) {
 
-            // trans_set_freq_full(new_freq);
-            // len = freq_to_string(new_freq, text);
-            // disp_text(text, len, 0);
+        //     // trans_set_freq_full(new_freq);
+        //     // len = freq_to_string(new_freq, text);
+        //     // disp_text(text, len, 0);
 
-            set_freq = set_freq + 10;
-            if (set_freq > 10800) set_freq = 8800;
-            len = freq_to_string(set_freq, text);
-            disp_text(text, len, 0);
-        }
+        //     set_freq = set_freq + 10;
+        //     if (set_freq > 10800) set_freq = 8800;
+        //     len = freq_to_string(set_freq, text);
+        //     disp_text(text, len, 0);
+        // }
         // if (!play_ && play) blt_play_pause();
         // if (!prev_ && prev) {
         //     // blt_prev();
@@ -123,26 +123,30 @@ void app_main(void)
 
         printf("transmitting frequency: %d\n", trans_freq);*/
         
-        rec_set_freq_full(set_freq);
+        // rec_set_freq_full(set_freq);
 
-        int_status = rec_get_int_status();
-        printf("int status = %x\n", int_status);
+        // int_status = rec_get_int_status();
+        // printf("int status = %x\n", int_status);
 
-        rec_tune_status(rec_tune_response);
-        rec_freq = (rec_tune_response[2] << 8) + (rec_tune_response[3]);
-        rssi = rec_tune_response[4];
-        snr = rec_tune_response[5];
-        mpi = rec_tune_response[6];
+        // rec_tune_status(rec_tune_response);
+        // rec_freq = (rec_tune_response[2] << 8) + (rec_tune_response[3]);
+        // rssi = rec_tune_response[4];
+        // snr = rec_tune_response[5];
+        // mpi = rec_tune_response[6];
 
-        printf("receiving frequency: %d\n", rec_freq);
-        printf("rssi: %d\n", rssi);
-        printf("snr: %d\n", snr);
-        printf("mpi: %d\n", mpi);
+        // printf("receiving frequency: %d\n", rec_freq);
+        // printf("rssi: %d\n", rssi);
+        // printf("snr: %d\n", snr);
+        // printf("mpi: %d\n", mpi);
 
-        sprintf(text, "%d", rssi);
-        disp_text(text, strlen(text), 1);
+        // sprintf(text, "%d", rssi);
+        // disp_text(text, strlen(text), 1);
 
-        check_buttons();
+        if(check_buttons() == CHANGE_FREQ_PIN) {
+            trans_set_freq_full(new_freq);
+            len = freq_to_string(new_freq, text);
+            disp_text(text, len, 0);
+        }
     }
     
     /* De-Initialize */

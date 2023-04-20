@@ -95,7 +95,7 @@ void blt_init(void) {
     return;
 }
 
-void check_buttons(void) {
+uint8_t check_buttons(void) {
     audio_event_iface_msg_t msg;
     // Check for events
     audio_event_iface_listen(event_handle, &msg, portMAX_DELAY);
@@ -103,7 +103,7 @@ void check_buttons(void) {
         // Button pressed 
         // ESP_LOGI(TAG, "Button pressed: gpio_num %d", (int)msg.data, (int)msg.cmd);
         switch((int)msg.data) {
-            case 18: 
+            case AVRC_PLAY_PAUSE_PIN: 
                 if(playback_status == ESP_AVRC_PLAYBACK_PLAYING) {
                     periph_bluetooth_pause(bt_periph);
                     // ESP_LOGI(TAG, "AVRC playback: pause");
@@ -112,11 +112,11 @@ void check_buttons(void) {
                     // ESP_LOGI(TAG, "AVRC playback: start");
                 }
                 break;
-            case 16:
+            case AVRC_NEXT_PIN:
                 periph_bluetooth_next(bt_periph);
                 // ESP_LOGI(TAG, "AVRC playback: next track");
                 break;
-            case 21:
+            case AVRC_PREV_PIN:
                 periph_bluetooth_prev(bt_periph);
                 // ESP_LOGI(TAG, "AVRC playback: previous track");
                 break;
@@ -124,5 +124,5 @@ void check_buttons(void) {
                 break; 
         }
     }
-    return;
+    return (int)msg.data;
 }
