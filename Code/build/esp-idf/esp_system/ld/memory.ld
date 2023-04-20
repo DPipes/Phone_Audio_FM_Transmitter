@@ -62,7 +62,6 @@ _esp_flash_mmap_prefetch_pad_size = 16;
 _esp_memprot_prefetch_pad_size = 0;
 /* Memory alignment size for PMS */
 _esp_memprot_align_size = 0;
-_esp_mmu_block_size = (0x10000);
 /* If BT is not built at all */
 MEMORY
 {
@@ -107,8 +106,8 @@ MEMORY
      additional static memory temporarily cannot be used.
 
   */
-  dram0_0_seg (RW) : org = 0x3FFB0000 + 0,
-                                     len = 0x2c200 - 0
+  dram0_0_seg (RW) : org = 0x3FFB0000 + 0xdb5c,
+                                     len = 0x2c200 - 0xdb5c
   /* Flash mapped constant data */
   drom0_0_seg (R) : org = 0x3F400020, len = 0x400000-0x20
   /* (See iram0_2_seg for meaning of 0x20 offset in the above.) */
@@ -125,7 +124,8 @@ MEMORY
      Start of RTC slow memory is reserved for ULP co-processor code + data, if enabled.
 
   */
-  rtc_slow_seg(RW) : org = 0x50000000, len = 0x2000
+  rtc_slow_seg(RW) : org = 0x50000000 + 0,
+                                     len = 0x2000 - 0
   /* external memory */
   extern_ram_seg(RWX) : org = 0x3F800000,
                                      len = 0x400000

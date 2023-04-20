@@ -6,7 +6,8 @@
 #define DCLK 0x00			// sample on rising edge (default)
 #define DIG_MODE 0x01		//I2S mode
 #define AUDIO_MODE 0x00		//stereo mode (default)
-#define S_PRECISION 0x06	//6 bits of precision (default)
+#define S_PRECISION 0x00	//6 bits of precision (default)
+#define SAMPLE_RATE 44100
 
 /**
  * @brief send a command to transmitter with arguments 

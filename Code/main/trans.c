@@ -17,7 +17,6 @@ sample
 
 static uint8_t trans_active = 0;
 //static uint16_t ref_freq;  // if not default, set and uncomment line in init()
-//static uint16_t sample_rate; // set for use of digital in
 
 void trans_command_full(uint8_t command, uint8_t *args, size_t num_args, 
 uint16_t delay, uint8_t *response, size_t resp_len){
@@ -65,11 +64,27 @@ void trans_init(void){
 
     trans_power_up_std(&response); //includes delay
 
-    /*
-    trans_set_refclk_freq(ref_freq);
-    trans_Dig_input_format(); //make sure to set the stuff in the input format
-    trans_input_sample_rate(sample_rate);
-    */
+    
+    trans_set_property_write(0x0201, 32768);
+    trans_set_property_write(0x0202, 1);
+    trans_set_property_write(0x2105, 0);
+    trans_set_property_write(0x2106, 1);
+    trans_set_property_write(0x2107, 0x4a38);
+    trans_set_property_write(0x2101, 0x1aa9);
+    trans_set_property_write(0x2102, 0x02a3);
+    trans_set_power_write(0x73); // 115dBm power
+    trans_set_freq_full(10130);
+    trans_set_property_write(0x2100, 0x3);
+    trans_set_property_write(0x0103, 44100);
+    trans_set_property_write(0x0101, 0);
+
+    // trans_set_refclk_freq(ref_freq);
+    // trans_Dig_input_format(); //make sure to set the stuff in the input format
+    // trans_input_sample_rate(SAMPLE_RATE);
+
+    // trans_set_property_write(0x2107, 1);
+    // trans_set_property_write(0x2100, 0x03);
+    
 }
 
 void trans_power_up_std(uint8_t *response){
@@ -137,6 +152,7 @@ void trans_set_power_write(uint8_t power){
     uint16_t delay = 21; //change this to what is appropriate
     
     trans_command_write(cmd, args, num_args);
+    vTaskDelay(delay / portTICK_PERIOD_MS);
 }
 
 // void trans_get_int_status(uint8_t *response){
@@ -223,6 +239,7 @@ void trans_set_property_write(uint16_t prop, uint16_t val){
 
     /*send the command,*/
     trans_command_write(cmd, args, num_args);
+    vTaskDelay(11 / portTICK_PERIOD_MS);
 }
 
 void trans_set_refclk_freq(uint16_t freq){

@@ -38,8 +38,7 @@
  * @param event The type of event 
  * @param p_param The data for the event
  */
-*/
-static void bt_app_avrc_ct_cb(esp_avrc_ct_cb_event_t event, esp_avrc_ct_cb_param_t *p_param)
+// void bt_app_avrc_ct_cb(esp_avrc_ct_cb_event_t event, esp_avrc_ct_cb_param_t *p_param);
 
 /**
  * @brief Initializes the Bluetooth system.

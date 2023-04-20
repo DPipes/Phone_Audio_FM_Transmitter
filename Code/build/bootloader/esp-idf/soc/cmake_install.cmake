@@ -1,4 +1,4 @@
-# Install script for directory: C:/Espressif/frameworks/esp-idf-v5.0.1/components/soc
+# Install script for directory: C:/Espressif/frameworks/esp-idf-v4.4/components/soc
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,11 +34,12 @@ endif()
 
 # Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "C:/Espressif/tools/xtensa-esp32-elf/esp-2022r1-11.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-objdump.exe")
+  set(CMAKE_OBJDUMP "C:/Espressif/tools/xtensa-esp32-elf/esp-2021r2-patch5-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-objdump.exe")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("C:/Users/dpipe/OneDrive/School/ECE445/Phone_Audio_FM_Transmitter/Code/build/bootloader/esp-idf/soc/esp32/cmake_install.cmake")
+  # Include the install script for each subdirectory.
+  include("C:/ece445/Phone_Audio_FM_Transmitter/Code/build/bootloader/esp-idf/soc/esp32/cmake_install.cmake")
+
 endif()
 

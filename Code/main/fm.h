@@ -2,7 +2,7 @@
 #include "trans.h"
 #include "rec.h"
 
-#define RCLK_FREQ 32768
+#define RCLK_FREQ 32768 
 #define RCLK_PIN 17
 
 /**

@@ -57,6 +57,7 @@ void blt_init(void) {
 
     // I2S configuration and start
     i2s_stream_cfg_t i2s_config = I2S_STREAM_CFG_DEFAULT();
+    // i2s_config.i2s_config.bits_per_sample = I2S_BITS_PER_SAMPLE_8BIT;
     audio_element_handle_t i2s_element = i2s_stream_init(&i2s_config);
     i2s_pin_config_t i2s_pins = {   // Reassign I2S pins from default
         .data_out_num = SD_PIN,
@@ -100,24 +101,24 @@ void check_buttons(void) {
     audio_event_iface_listen(event_handle, &msg, portMAX_DELAY);
     if((int)msg.source_type == PERIPH_ID_BUTTON && (int)msg.cmd == PERIPH_BUTTON_PRESSED) {
         // Button pressed 
-        ESP_LOGI(TAG, "Button pressed: gpio_num %d", (int)msg.data, (int)msg.cmd);
+        // ESP_LOGI(TAG, "Button pressed: gpio_num %d", (int)msg.data, (int)msg.cmd);
         switch((int)msg.data) {
             case 18: 
                 if(playback_status == ESP_AVRC_PLAYBACK_PLAYING) {
                     periph_bluetooth_pause(bt_periph);
-                    ESP_LOGI(TAG, "AVRC playback: pause");
+                    // ESP_LOGI(TAG, "AVRC playback: pause");
                 } else if(playback_status == ESP_AVRC_PLAYBACK_PAUSED) {
                     periph_bluetooth_play(bt_periph);
-                    ESP_LOGI(TAG, "AVRC playback: start");
+                    // ESP_LOGI(TAG, "AVRC playback: start");
                 }
                 break;
-            case 21:
-                periph_bluetooth_next(bt_periph);
-                ESP_LOGI(TAG, "AVRC playback: next track");
-                break;
             case 16:
+                periph_bluetooth_next(bt_periph);
+                // ESP_LOGI(TAG, "AVRC playback: next track");
+                break;
+            case 21:
                 periph_bluetooth_prev(bt_periph);
-                ESP_LOGI(TAG, "playback: previous track");
+                // ESP_LOGI(TAG, "AVRC playback: previous track");
                 break;
             default:
                 break; 

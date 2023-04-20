@@ -19,12 +19,13 @@ void app_main(void)
     /* Initialize */
     i2c_init();
     rclk_init();
+    blt_init();
     trans_init(); //be sure to set digital input format
     rec_init();
-    blt_init();
     input_init();
     disp_init();
-
+    
+    
 
     /* Variables for current and previous GPIO state */
     int freq = 1;
@@ -39,8 +40,8 @@ void app_main(void)
     char text[20];
     int len;
 
-    uint16_t new_freq;
-    uint8_t new_rssi;
+    uint16_t new_freq = 0;
+    uint8_t new_rssi = 0;
 
     //tesing the transmitter and reciever
     uint8_t trans_tune_response[8] = {};
@@ -54,55 +55,51 @@ void app_main(void)
 
     uint16_t rec_freq = 0;
     uint8_t rec_tune_response[8] = {};
-    uint16_t set_freq = 9750;
+    uint16_t set_freq = 10330;
 
     trans_set_freq_full(set_freq);
     rec_set_freq_full(set_freq);
     len = freq_to_string(set_freq, text);
     disp_text(text, len, 0);
+    
 
     /* Main loop */
     while (true) {
 
         // TODO Check if this can be done with any GPIO functions rather than having to track current and previous pin state
         /* Get current GPIO state */
-        freq_ = gpio_get_level(CHANGE_FREQ_PIN);
-        play_ = gpio_get_level(PLAY_PAUSE_PIN);
-        prev_ = gpio_get_level(PREV_PIN);
-        next_ = gpio_get_level(NEXT_PIN);
+        // freq_ = gpio_get_level(CHANGE_FREQ_PIN);
+        // play_ = gpio_get_level(PLAY_PAUSE_PIN);
+        // prev_ = gpio_get_level(PREV_PIN);
+        // next_ = gpio_get_level(NEXT_PIN);
 
         /* On button press perform functions */
         if (!freq_ && freq) {
-            /* This sets to the best frequency and updates the display
-               Uncomment when done testing
-            
-            trans_set_freq_full(new_freq);
-            len = freq_to_string(new_freq, text);
-            disp_text(text, len, 0);
-            */
+
+            // trans_set_freq_full(new_freq);
+            // len = freq_to_string(new_freq, text);
+            // disp_text(text, len, 0);
+
             set_freq = set_freq + 10;
             if (set_freq > 10800) set_freq = 8800;
             len = freq_to_string(set_freq, text);
             disp_text(text, len, 0);
         }
-        if (!play_ && play) blt_play_pause();
-        if (!prev_ && prev) {
-            blt_prev();
-            set_freq = set_freq - 10;
-            if (set_freq < 8800) set_freq = 10800;
-            len = freq_to_string(set_freq, text);
-            disp_text(text, len, 0);
-        }
-        if (!next_ && next) blt_next();
+        // if (!play_ && play) blt_play_pause();
+        // if (!prev_ && prev) {
+        //     // blt_prev();
+        //     set_freq = set_freq - 10;
+        //     if (set_freq < 8800) set_freq = 10800;
+        //     len = freq_to_string(set_freq, text);
+        //     disp_text(text, len, 0);
+        // }
+        // // if (!next_ && next) blt_next();
 
-        /* Update previous GPIO state */
-        freq = freq_;
-        play = play_;
-        prev = prev_;
-        next = next_;
-
-        /* This is the loop to check frequencies on the receiver
-           Uncomment when done testing
+        // /* Update previous GPIO state */
+        // freq = freq_;
+        // play = play_;
+        // prev = prev_;
+        // next = next_;
            
         set_freq = set_freq + 20;
         if(set_freq > 10800) set_freq = 8790;
@@ -111,11 +108,10 @@ void app_main(void)
         rec_tune_status(rec_tune_response);
         rssi = rec_tune_response[4];
 
-        if (rssi < new_rssi) {
+        if ((rssi < new_rssi) || (set_freq == new_freq)) {
             new_freq = set_freq;
             new_rssi = rssi;
         }
-        */
 
         //reciever and transmitter stuff
 
