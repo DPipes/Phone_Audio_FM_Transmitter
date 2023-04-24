@@ -1,30 +1,59 @@
 #include <stdio.h>
 #include "i2c_main.h"
+#include "fm_ic.h"
 
-#define TRANS_ADDR      0x63
-#define TRANS_RST_PIN   26
-#define DCLK 0x00			// sample on rising edge (default)
-#define DIG_MODE 0x01		//I2S mode
-#define AUDIO_MODE 0x00		//stereo mode (default)
-#define S_PRECISION 0x00	//6 bits of precision (default)
-#define SAMPLE_RATE 44100
+#define TRANS_ADDR			0x63
+#define TRANS_RST_PIN		26
 
-/**
- * @brief send a command to transmitter with arguments 
- * and recieve the response
- */
-void trans_command_full(uint8_t command, uint8_t *args, size_t num_args, 
-uint16_t delay, uint8_t *response, size_t resp_len);
+#define AUDIO_SAMPLE_RATE	44100
+
+/* Commands and Arguments */
+#define POWER_UP			0x01
+#define POWER_TRANSMIT		0x02
+#define POWER_DIGITAL_AUDIO	0x0F
+
+#define SET_PROPERTY		0x12
+
+#define GET_INT_STATUS		0x14
+
+#define	TX_TUNE_FREQ		0x30
+
+#define TX_TUNE_POWER		0x31
+
+#define TX_TUNE_STATUS		0x33
+#define TUNE_INT_CLR		0x01
+
+/* Properties */
+#define DIGITAL_INPUT_FORMAT		0x0101
+#define DIGITAL_INPUT_SAMPLE_RATE	0x0103
+#define REFCLK_FREQ					0x0201
+#define RCLK_PRESCALE				0x0202
+#define TX_COMPONENT_ENABLE			0x2100
+#define TX_AUDIO_DEVIATION			0x2101
+#define TX_PILOT_DEVIATION			0x2102
+#define TX_LINE_INPUT_LEVEL_MUTE	0x2105
+#define TX_PREEMPHASIS				0x2106
+#define TX_PILOT_FREQUENCY			0x2107
+
+/* Transmitter specific delay lengths in milliseconds */
+#define	TRANS_STC_DELAY		100
 
 /**
  * @brief Write to transmitter IC
+ *
+ * @param command  Command to write to transmitter
+ * @param *args    Pointer to arguments to write
+ * @param num_args Number of arguments to write
  */
-void trans_command_write(uint8_t command, uint8_t *args, size_t num_args);
+void trans_write(uint8_t command, uint8_t* args, size_t num_args);
 
 /**
  * @brief Read from transmitter IC
+ *
+ * @param *data Pointer to hold response
+ * @param len   Length of response in bytes
  */
-void trans_read(uint8_t *data, size_t len);
+void trans_read(uint8_t* data, size_t len);
 
 /**
  * @brief Initialize the transmitter IC
@@ -32,87 +61,45 @@ void trans_read(uint8_t *data, size_t len);
 void trans_init(void);
 
 /**
- * @brief boot normally, interupts off, RCLK off, transmit mode
+ * @brief Writes power up command to transmitter.
  */
-void trans_power_up_std(uint8_t *response);
+void trans_power_up(void);
 
 /**
- * @brief Change transmit frequency, write and read response
- * 
- * @param freq New frequency in 10's of kHz. 101.1 MHz = 10110d = 0x277E
+ * @brief Change transmit frequency
+ *
+ * @param freq New frequency in 10's of kHz.
+ *		       101.1 MHz = 10110d = 0x277E
  */
-void trans_set_freq_full(uint16_t freq);
+void trans_tune_freq(uint16_t freq);
 
 /**
- * @brief Change transmit frequency, ony writes
- * 
- * @param freq New frequency in 10's of kHz. 101.1 MHz = 10110d = 0x277E
+ * @brief Sets desired transmission power
+ *
+ * @param power Desired power level in dBuV.
+ *			    Acceptable values from 88-115
  */
-void trans_set_freq_write(uint16_t freq);
+void trans_tune_power(uint8_t power);
 
 /**
- * @brief Change transmit frequency, ony writes
- * 
- * @param power sets power in dBuV, range 88-115
- */
-void trans_set_power_write(uint8_t power);
-
-/**
- * @brief gets the interrupt satatus, includes delay, 1ms
- * can only be sent during powerup mode
- * 
- * @param *response the response bit
- */
-//void trans_get_int_status(uint8_t *response);
-
-/**
- * @brief gets the interrupt satatus, includes delay, 1ms,
- * returns the status byte,
- * can only be sent during powerup mode
+ * @brief Reads and returns status byte from transmitter
+ *		  Transmitter must be in powerup mode to use
  */
 uint8_t trans_get_int_status(void);
 
 /**
- * @brief tells what frequency and power level we 
- * are currently transmitting
- * 
- * @param *response the response bit
+ * @brief Stores the frequency and power currently transmitting
+ *		  to the given pointer
+ *
+ * @param *response Pointer to store response.
+ *		   Response is 8 bytes and pointer needs enough space
  */
-void trans_tune_status(uint8_t *response);
+void trans_tune_status(uint8_t* response);
 
 /**
- * @brief sets a property, gets status byte
- * 
- * @param *prop the property to set
- * @param *val the value to set the property to
- * @param *response the response bit
+ * @brief Set transmitter property
+ *
+ * @param prop Property to set
+ * @param val  Value to set
  */
-void trans_set_property(uint16_t prop, uint16_t val, uint8_t *response);
-
-/**
- * @brief sets a property, sends command only
- * 
- * @param *prop the property to set
- * @param *val the value to set the property to
- */
-void trans_set_property_write(uint16_t prop, uint16_t val);
-
-/**
- * @brief sets the frequency of the reference clock at rclk input
- * 
- * @param *freq the frequency in hz
- */
-void trans_set_refclk_freq(uint16_t freq);
-
-/**
- * @brief sets the format of the digital input
- */
-void trans_Dig_input_format(void);
-
-/**
- * @brief sets the input sample rate 
- * (send tx_tun_freq First)
- * 
- * @param *rate, the sample rate in hz
- */
-void trans_input_sample_rate(uint16_t rate);
+void trans_set_property(uint16_t prop, uint16_t val);

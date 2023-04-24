@@ -1,45 +1,16 @@
-/*#####################################################################
-#######################################################################
-In order for everything to work, some values need to be set inside this file:
-
-ref_freq is the reference frequency, set if not default and uncomment lines in init()
-
-sample
-
-#######################################################################
-#######################################################################
-*/
-
-
-#include <stdio.h>
-#include "i2c_main.h"
 #include "trans.h"
 
 static uint8_t trans_active = 0;
-//static uint16_t ref_freq;  // if not default, set and uncomment line in init()
 
-void trans_command_full(uint8_t command, uint8_t *args, size_t num_args, 
-uint16_t delay, uint8_t *response, size_t resp_len){
-
-    /*send the command*/
-    i2c_register_write(TRANS_ADDR, command, args, num_args);
-
-    //delay by "delay" ms
-    vTaskDelay(delay / portTICK_PERIOD_MS);
-
-    //recieve the response
-    i2c_address_only_read(TRANS_ADDR, response, resp_len);
-}
-
-void trans_command_write(uint8_t command, uint8_t *args, size_t num_args){
+void trans_write(uint8_t command, uint8_t* args, size_t num_args) {
     i2c_register_write(TRANS_ADDR, command, args, num_args);
 }
 
-void trans_read(uint8_t *data, size_t len){
+void trans_read(uint8_t* data, size_t len) {
     i2c_address_only_read(TRANS_ADDR, data, len);
 }
 
-void trans_init(void){
+void trans_init(void) {
     if (trans_active) {
         // TODO Reinitialize transmitter if already active
     }
@@ -48,222 +19,104 @@ void trans_init(void){
 
     /* Set the GPIO pin as an output */
     gpio_set_direction(TRANS_RST_PIN, GPIO_MODE_OUTPUT);
-    
+
     /* Reset transmitter IC */
     gpio_set_level(TRANS_RST_PIN, trans_active);
-
-    // TODO Pre-reset IC configuration
 
     /* Enable transmitter IC */
     trans_active = 1;
     gpio_set_level(TRANS_RST_PIN, trans_active);
 
-    vTaskDelay(1 / portTICK_PERIOD_MS);
+    vTaskDelay(GENERAL_DELAY / portTICK_PERIOD_MS);
 
-    uint8_t response;
-
-    trans_power_up_std(&response); //includes delay
-
-    
-    trans_set_property_write(0x0201, 32768);
-    trans_set_property_write(0x0202, 1);
-    trans_set_property_write(0x2105, 0);
-    trans_set_property_write(0x2106, 1);
-    trans_set_property_write(0x2107, 0x4a38);
-    trans_set_property_write(0x2101, 0x1aa9);
-    trans_set_property_write(0x2102, 0x02a3);
-    trans_set_power_write(0x73); // 115dBm power
-    trans_set_property_write(0x2100, 0x3);
-    trans_set_property_write(0x0103, 44100);
-    trans_set_property_write(0x0101, 0);
-
-    // trans_set_refclk_freq(ref_freq);
-    // trans_Dig_input_format(); //make sure to set the stuff in the input format
-    // trans_input_sample_rate(SAMPLE_RATE);
-
-    // trans_set_property_write(0x2107, 1);
-    // trans_set_property_write(0x2100, 0x03);
-    
+    /* Power up transmitter and write initialization properties */
+    trans_power_up();
+    trans_set_property(REFCLK_FREQ, RCLK_FREQ);
+    trans_set_property(RCLK_PRESCALE, 1);
+    trans_set_property(TX_LINE_INPUT_LEVEL_MUTE, 0);
+    trans_set_property(TX_PREEMPHASIS, 1);
+    trans_set_property(TX_PILOT_FREQUENCY, 0x4a38);
+    trans_set_property(TX_AUDIO_DEVIATION, 0x1aa9);
+    trans_set_property(TX_PILOT_DEVIATION, 0x02a3);
+    trans_tune_power(115);
+    trans_tune_freq(8800);
+    trans_set_property(TX_COMPONENT_ENABLE, 0x3);
+    trans_set_property(DIGITAL_INPUT_SAMPLE_RATE, AUDIO_SAMPLE_RATE);
+    trans_set_property(DIGITAL_INPUT_FORMAT, 0);
 }
 
-void trans_power_up_std(uint8_t *response){
-    /*set up the parameters*/
-    uint8_t cmd = 0x1;
-    uint8_t arg1 = 0x02;
-    uint8_t arg2 = 0x0f;
-    size_t num_args = 2;
-    uint8_t args[] = {arg1,arg2};
-    
-    uint16_t delay = 112;
+void trans_power_up(void) {
+    /* Setup arguments */
+    uint8_t args[2] = {
+        POWER_TRANSMIT,
+        POWER_DIGITAL_AUDIO
+    };
 
-    size_t resp_len = 1;
-
-    /*send the command and get the response*/
-    
-    //not using trans_command anymore cause of delay
-    //trans_command(cmd, args, num_args, response, resp_len);
-
-    trans_command_full(cmd, args, num_args, delay, response, resp_len);
+    /* Write command to transmitter and delay */
+    trans_write(POWER_UP, args, 2);
+    vTaskDelay(POWER_UP_DELAY / portTICK_PERIOD_MS);
 }
 
-void trans_set_freq_full(uint16_t freq){
-    /*set up the parameters*/
-    uint8_t cmd = 0x30;
+void trans_tune_freq(uint16_t freq) {
+    /* Setup arguments */
+    uint8_t args[3] = {
+        0x00,
+        (freq >> 8),
+        (freq & 0xff)
+    };
 
-    uint8_t arg1 = 0x0;
-    uint8_t arg2 = freq >> 8;
-    uint8_t arg3 = freq & 0xff;
-    size_t num_args = 3;
-    uint8_t args[] = {arg1,arg2,arg3};
-    
-    uint16_t delay = 101; //change this to what is appropriate
-
-    uint8_t response;
-    size_t resp_len = 1;
-
-    trans_command_full(cmd, args, num_args, delay, &response, resp_len);
+    /* Write command to transmitter and delay */
+    trans_write(TX_TUNE_FREQ, args, 3);
+    vTaskDelay(TRANS_STC_DELAY / portTICK_PERIOD_MS);
 }
 
-void trans_set_freq_write(uint16_t freq){
-    /*set up the parameters*/
-    uint8_t cmd = 0x30;
+void trans_tune_power(uint8_t power) {
+    /* Setup arguments */
+    uint8_t args[4] = {
+        0x00,
+        0x00,
+        power,
+        0x00
+    };
 
-    uint8_t arg1 = 0x0;
-    uint8_t arg2 = freq >> 8;
-    uint8_t arg3 = freq & 0xff;
-    size_t num_args = 3;
-    uint8_t args[] = {arg1,arg2,arg3};
-    
-    trans_command_write(cmd, args, num_args);
+    /* Write command to transmitter and delay */
+    trans_write(TX_TUNE_POWER, args, 4);
+    vTaskDelay(20 / portTICK_PERIOD_MS);
 }
 
-void trans_set_power_write(uint8_t power){
-    /*set up the parameters*/
-    uint8_t cmd = 0x31;
-
-    uint8_t arg1 = 0;
-    uint8_t arg2 = 0;
-    uint8_t arg3 = power;
-    uint8_t arg4 = 0;
-    size_t num_args = 4;
-    uint8_t args[] = {arg1,arg2,arg3,arg4};
-    
-    uint16_t delay = 21; //change this to what is appropriate
-    
-    trans_command_write(cmd, args, num_args);
-    vTaskDelay(delay / portTICK_PERIOD_MS);
-}
-
-// void trans_get_int_status(uint8_t *response){
-//     /*set up parameters*/
-//     uint8_t cmd = 0x14;
-//     size_t num_args = 0;
-//     uint8_t args[] = NULL;
-    
-//     uint16_t delay = 1;
-
-//     size_t resp_len = 1;
-
-//     trans_command_full(cmd, args, num_args, delay, response, resp_len);
-// }
-
-uint8_t trans_get_int_status(void){
-    /*set up parameters, command and args*/
-    uint8_t cmd = 0x14;
-    size_t num_args = 0;
+uint8_t trans_get_int_status(void) {
     uint8_t args;
-    
-    /*define delay*/
-    uint16_t delay = 1;
-
-    /*set up parameters, response*/
     uint8_t response;
-    size_t resp_len = 1;
 
-    /*send the command, get the response*/
-    trans_command_full(cmd, &args, num_args, delay, &response, resp_len);
+    /* Write command to transmitter, delay, and read response */
+    trans_write(GET_INT_STATUS, &args, 0);
+    vTaskDelay(GENERAL_DELAY / portTICK_PERIOD_MS);
+    trans_read(&response, 1);
 
     return response;
 }
 
-void trans_tune_status(uint8_t *response){
-    /*set up parameters, command and args*/
-    uint8_t cmd = 0x33;
-    uint8_t arg1 = 0x1;
-    size_t num_args = 1;
-    uint8_t args[] = {arg1};
-    
-    /*define delay*/
-    uint16_t delay = 1;
+void trans_tune_status(uint8_t* response) {
+    /* Setup arguments */
+    uint8_t arg = TUNE_INT_CLR;
 
-    /*set up parameters, response*/
-    size_t resp_len = 8;
-
-    /*send the command, get the response*/
-    trans_command_full(cmd, args, num_args, delay, response, resp_len);
+    /* Write command to transmitter, delay, and read response */
+    trans_write(TX_TUNE_STATUS, &arg, 1);
+    vTaskDelay(GENERAL_DELAY / portTICK_PERIOD_MS);
+    trans_read(response, 8);
 }
 
-void trans_set_property(uint16_t prop, uint16_t val, uint8_t *response){
-    /*set up parameters, command and args*/
-    uint8_t cmd = 0x12;
-    uint8_t arg1 = 0x0;
-    uint8_t arg2 = prop >> 8;
-    uint8_t arg3 = prop & 0xff;
-    uint8_t arg4 = val >> 8;
-    uint8_t arg5 = val & 0xff;
-    size_t num_args = 5;
-    uint8_t args[] = {arg1, arg2, arg3, arg4, arg5};
-    
-    /*define delay*/
-    uint16_t delay = 11;
+void trans_set_property(uint16_t prop, uint16_t val) {
+    /* Setup arguments */
+    uint8_t args[5] = {
+        0x00,
+        (prop >> 8),
+        (prop & 0xff),
+        (val >> 8),
+        (val & 0xff)
+    };
 
-    /*set up parameters, response*/
-    size_t resp_len = 1;
-
-    /*send the command, get the response*/
-    trans_command_full(cmd, args, num_args, delay, response, resp_len);
+    /* Write command to transmitter and delay */
+    trans_write(SET_PROPERTY, args, 5);
+    vTaskDelay(PROP_DELAY / portTICK_PERIOD_MS);
 }
-
-void trans_set_property_write(uint16_t prop, uint16_t val){
-    /*set up parameters, command and args*/
-    uint8_t cmd = 0x12;
-    uint8_t arg1 = 0x0;
-    uint8_t arg2 = prop >> 8;
-    uint8_t arg3 = prop & 0xff;
-    uint8_t arg4 = val >> 8;
-    uint8_t arg5 = val & 0xff;
-
-    size_t num_args = 5;
-    uint8_t args[] = {arg1, arg2, arg3, arg4, arg5};
-
-    /*send the command,*/
-    trans_command_write(cmd, args, num_args);
-    vTaskDelay(11 / portTICK_PERIOD_MS);
-}
-
-void trans_set_refclk_freq(uint16_t freq){
-    uint16_t prop = 0x0201;
-
-    trans_set_property_write(prop,freq);
-
-    vTaskDelay(11 / portTICK_PERIOD_MS);
-}
-
-void trans_Dig_input_format(void){
-    uint16_t prop = 0x0101;
-
-    uint16_t format = (DCLK << 7) + (DIG_MODE << 3) + (AUDIO_MODE << 2) + S_PRECISION;
-
-    trans_set_property_write(prop,format);
-
-    vTaskDelay(11 / portTICK_PERIOD_MS);
-}
-
-void trans_input_sample_rate(uint16_t rate){
-    uint16_t prop = 0x0103;
-    
-    trans_set_property_write(prop,rate);
-
-    vTaskDelay(11 / portTICK_PERIOD_MS);
-}
-

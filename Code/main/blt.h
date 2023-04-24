@@ -34,6 +34,7 @@
 #define AVRC_PLAY_PAUSE_PIN GPIO_NUM_18
 #define AVRC_NEXT_PIN       GPIO_NUM_16
 #define AVRC_PREV_PIN       GPIO_NUM_21
+#define CHANGE_FREQ_PIN		GPIO_NUM_19
 #define CTRL_PINS       (GPIO_SEL_18|GPIO_SEL_21|GPIO_SEL_16|GPIO_SEL_19)
 
 
@@ -58,20 +59,5 @@ void blt_init(void);
  * @return uin8_t The GPIO number of the button if pressed, 0 otherwise
  */
 uint8_t check_buttons(void);
-
-/**
- * @brief Plays or pauses audio stream from device
- */
-void blt_play_pause(void);
-
-/**
- * @brief Requests previous track from device
- */
-void blt_prev(void);
-
-/**
- * @brief Requests next track from device
- */
-void blt_next(void);
 
 #endif

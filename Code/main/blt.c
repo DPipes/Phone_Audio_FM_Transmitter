@@ -127,24 +127,3 @@ uint8_t check_buttons(void) {
     }
     return 0;
 }
-
-void blt_play_pause(void) {
-    if (playback_status == ESP_AVRC_PLAYBACK_PLAYING) {
-        periph_bluetooth_pause(bt_periph);
-        ESP_LOGI(TAG, "AVRC playback: pause");
-    }
-    else if (playback_status == ESP_AVRC_PLAYBACK_PAUSED) {
-        periph_bluetooth_play(bt_periph);
-        ESP_LOGI(TAG, "AVRC playback: start");
-    }
-}
-
-void blt_next(void) {
-    periph_bluetooth_next(bt_periph);
-    ESP_LOGI(TAG, "AVRC playback: next track");
-}
-
-void blt_prev(void) {
-    periph_bluetooth_prev(bt_periph);
-    ESP_LOGI(TAG, "AVRC playback: previous track");
-}
