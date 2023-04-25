@@ -11,6 +11,12 @@
 static esp_avrc_playback_stat_t playback_status = ESP_AVRC_PLAYBACK_PAUSED;
 static esp_periph_handle_t bt_periph;
 static audio_event_iface_handle_t event_handle;
+static char* track[METADATA_LEN];
+static char* artist[METADATA_LEN];
+static char* album[METADATA_LEN];
+static uint8_t track_len = 0;
+static uint8_t artist_len = 0;
+static uint8_t album_len = 0;
 
 static void bt_app_avrc_ct_cb(esp_avrc_ct_cb_event_t event, esp_avrc_ct_cb_param_t *p_param) {
     esp_avrc_ct_cb_param_t *rc = p_param;
@@ -20,6 +26,7 @@ static void bt_app_avrc_ct_cb(esp_avrc_ct_cb_event_t event, esp_avrc_ct_cb_param
             uint8_t *tmp = audio_calloc(1, rc->meta_rsp.attr_length + 1);
             memcpy(tmp, rc->meta_rsp.attr_text, rc->meta_rsp.attr_length);
             ESP_LOGI(TAG, "AVRC metadata rsp: attribute id 0x%x, %s", rc->meta_rsp.attr_id, tmp);
+            blt_metadata(tmp, rc->meta_rsp.attr_id, rc->meta_rsp.attr_length);
             audio_free(tmp);
             break;
         }
@@ -126,4 +133,50 @@ uint8_t check_buttons(void) {
         return (int)msg.data;
     }
     return 0;
+}
+
+void blt_metadata(uint8_t* tmp, uint8_t id, uint8_t len) {
+    switch (id) {
+    case 1 :
+        for (int i = 0; i < METADATA_LEN; i++) {
+            if (i < len) track[i] = tmp[i];
+            track_len = len;
+        }
+        break;
+    case 2:
+        for (int i = 0; i < METADATA_LEN; i++) {
+            if (i < len) artist[i] = tmp[i];
+            artist_len = len;
+        }
+        break;
+    case 4:
+        for (int i = 0; i < METADATA_LEN; i++) {
+            if (i < len) album[i] = tmp[i];
+            album_len = len;
+        }
+        break;
+    default:
+        break;
+    }
+
+    char* text[80];
+
+    for (int i = 0; i < track_len; i++) {
+        text[i] = track[i];
+    }
+    text[track_len] = 0x20;
+    text[track_len + 1] = 0x20;
+    text[track_len + 2] = 0x20;
+    for (int i = 0; i < artist_len; i++) {
+        text[i + track_len + 3] = artist[i];
+    }
+    text[artist_len + track_len + 3] = 0x20;
+    text[artist_len + track_len + 4] = 0x20;
+    text[artist_len + track_len + 5] = 0x20;
+    for (int i = 0; i < album_len; i++) {
+        text[i + artist_len + track_len + 6] = artist[i];
+    }
+
+    uint8_t len = album_len + artist_len + track_len + 6;
+    trans_rds_write(text, len);
 }

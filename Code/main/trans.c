@@ -32,17 +32,30 @@ void trans_init(void) {
     /* Power up transmitter and write initialization properties */
     trans_power_up();
     trans_set_property(REFCLK_FREQ, RCLK_FREQ);
-    trans_set_property(RCLK_PRESCALE, 1);
-    trans_set_property(TX_LINE_INPUT_LEVEL_MUTE, 0);
-    trans_set_property(TX_PREEMPHASIS, 1);
+    trans_set_property(RCLK_PRESCALE, 0x0001);
+    trans_set_property(TX_LINE_INPUT_LEVEL_MUTE, 0x0000);
+    trans_set_property(TX_PREEMPHASIS, 0x0000);
     trans_set_property(TX_PILOT_FREQUENCY, 0x4a38);
     trans_set_property(TX_AUDIO_DEVIATION, 0x1aa9);
     trans_set_property(TX_PILOT_DEVIATION, 0x02a3);
     trans_tune_power(115);
     trans_tune_freq(8800);
-    trans_set_property(TX_COMPONENT_ENABLE, 0x3);
+    trans_set_property(TX_COMPONENT_ENABLE, 0x0003);
     trans_set_property(DIGITAL_INPUT_SAMPLE_RATE, AUDIO_SAMPLE_RATE);
-    trans_set_property(DIGITAL_INPUT_FORMAT, 0);
+    trans_set_property(DIGITAL_INPUT_FORMAT, 0x0000);
+
+
+    trans_set_property(TX_AUDIO_DEVIATION, 0x19E1);
+    trans_set_property(TX_RDS_DEVIATION, 0x00C8);
+    trans_set_property(TX_RDS_INTERRUPT_SOURCE, 0x0000);
+    trans_set_property(TX_RDS_PI, 0x40A7);
+    trans_set_property(TX_RDS_PS_MIX, 0x0006);
+    trans_set_property(TX_RDS_PS_MISC, 0x1008);
+    trans_set_property(TX_RDS_PS_REPEAT_COUNT, 0x0003);
+    trans_set_property(TX_RDS_PS_MESSAGE_COUNT, 0x0003);
+    // trans_set_property(TX_RDS_PS_AF, 0xE102);           // Alt frequency, probably don't need
+    trans_set_property(TX_RDS_FIFO_SIZE, 0x0004);
+    trans_set_property(TX_COMPONENT_ENABLE, 0x7);
 }
 
 void trans_power_up(void) {
@@ -119,4 +132,45 @@ void trans_set_property(uint16_t prop, uint16_t val) {
     /* Write command to transmitter and delay */
     trans_write(SET_PROPERTY, args, 5);
     vTaskDelay(PROP_DELAY / portTICK_PERIOD_MS);
+}
+
+void trans_rds_ps_write(uint8_t psid, char* text) {
+    /* Setup arguments */
+    uint8_t args[5] = {
+        psid,
+        text[0],
+        text[1],
+        text[2],
+        text[3],
+    };
+
+    /* Write command to transmitter and delay */
+    trans_write(TX_RDS_PS, args, 5);
+    vTaskDelay(GENERAL_DELAY / portTICK_PERIOD_MS);
+
+}
+
+void trans_rds_write(char* text, uint8_t len) {
+    uint8_t psid = 0;
+
+    while ((len >= 4) && (psid < 24)) {
+        trans_rds_ps_write(psid, text);
+        text += 4;
+        len -= 4;
+        psid++;
+    }
+    if ((len > 0) && (psid < 24)) {
+        char* tex[4] = {};
+        for (int i = 0; i < 4; i++) {
+            if (i < len) tex[i] = text[i];
+            else tex[i] = 0x20;
+        }
+        trans_rds_ps_write(psid, tex);
+        psid++;
+    }
+    while (psid < 24) {
+        char* tex[4] = {0x20, 0x20, 0x20, 0x20};
+        trans_rds_ps_write(psid, tex);
+        psid++;
+    }
 }

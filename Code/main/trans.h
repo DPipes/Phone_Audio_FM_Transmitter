@@ -23,6 +23,10 @@
 #define TX_TUNE_STATUS		0x33
 #define TUNE_INT_CLR		0x01
 
+#define TX_RDS_BUFF			0x35
+
+#define TX_RDS_PS			0x36
+
 /* Properties */
 #define DIGITAL_INPUT_FORMAT		0x0101
 #define DIGITAL_INPUT_SAMPLE_RATE	0x0103
@@ -31,9 +35,18 @@
 #define TX_COMPONENT_ENABLE			0x2100
 #define TX_AUDIO_DEVIATION			0x2101
 #define TX_PILOT_DEVIATION			0x2102
+#define TX_RDS_DEVIATION			0x2103
 #define TX_LINE_INPUT_LEVEL_MUTE	0x2105
 #define TX_PREEMPHASIS				0x2106
 #define TX_PILOT_FREQUENCY			0x2107
+#define TX_RDS_INTERRUPT_SOURCE		0x2C00
+#define TX_RDS_PI					0x2C01
+#define TX_RDS_PS_MIX				0x2C02
+#define TX_RDS_PS_MISC				0x2C03
+#define TX_RDS_PS_REPEAT_COUNT		0x2C04
+#define TX_RDS_PS_MESSAGE_COUNT		0x2C05
+#define TX_RDS_PS_AF				0x2C06
+#define TX_RDS_FIFO_SIZE			0x2C07
 
 /* Transmitter specific delay lengths in milliseconds */
 #define	TRANS_STC_DELAY		100
@@ -103,3 +116,7 @@ void trans_tune_status(uint8_t* response);
  * @param val  Value to set
  */
 void trans_set_property(uint16_t prop, uint16_t val);
+
+void trans_rds_ps_write(uint8_t psid, char* text);
+
+void trans_rds_write(char* text, uint8_t len);

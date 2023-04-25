@@ -37,6 +37,8 @@
 #define CHANGE_FREQ_PIN		GPIO_NUM_19
 #define CTRL_PINS       (GPIO_SEL_18|GPIO_SEL_21|GPIO_SEL_16|GPIO_SEL_19)
 
+#define METADATA_LEN		22
+
 
 
 /**
@@ -59,5 +61,7 @@ void blt_init(void);
  * @return uin8_t The GPIO number of the button if pressed, 0 otherwise
  */
 uint8_t check_buttons(void);
+
+void blt_metadata(uint8_t *tmp, uint8_t id, uint8_t len);
 
 #endif
