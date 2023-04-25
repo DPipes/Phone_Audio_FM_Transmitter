@@ -4,6 +4,7 @@ static uint8_t chan_counter = 0;
 static uint8_t sum_counter = 0;
 static struct Chan chans[NUM_CHANS];
 static uint16_t rssi_thresh = RSSI_THRESH * SUM_LEN;
+static uint8_t offset = SPACING / 2;
 static uint8_t rec_tune_response[8] = {};
 static uint8_t rssi;
 static uint8_t len;
@@ -111,19 +112,15 @@ void change_freq(void) {
 
     /* Search through possible channels and select one with lowest rssi and with neighbors below threshold */
     for (int i = 0; i < num_mins; i++) {
-        if (mins[i] == 0) {
-            if (chans[mins[i + 1]].rssi_sum < rssi_thresh) {
-                set_freq = chans[mins[i]].freq;
-                break;
+        bool check = true;
+        for (int j = -offset; j <= offset; j++) {
+            uint8_t ind = chans[mins[i] + j];
+            if ((ind >= 0) && (ind < NUM_CHANS)) {
+                if (chans[ind].rssi_sum >= rssi_thresh) check = false;
             }
         }
-        else if (mins[i] == (NUM_CHANS - 1)) {
-            if (chans[mins[i - 1]].rssi_sum < rssi_thresh) {
-                set_freq = chans[mins[i]].freq;
-                break;
-            }
-        }
-        else if ((chans[mins[i - 1]].rssi_sum < rssi_thresh) && (chans[mins[i + 1]].rssi_sum < rssi_thresh)) {
+        
+        if (check) {
             set_freq = chans[mins[i]].freq;
             break;
         }

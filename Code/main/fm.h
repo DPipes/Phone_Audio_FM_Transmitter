@@ -16,7 +16,9 @@
 
 #define SUM_LEN		5	// Length of rolling sum
 
-#define RSSI_THRESH 35
+#define RSSI_THRESH 20
+
+#define SPACING		5
 
 /* Channel struct to track rolling rssi values */
 struct Chan {
