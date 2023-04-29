@@ -6,8 +6,8 @@
 
   (title_block
     (title "User Interface")
-    (date "2023-03-04")
-    (rev "2")
+    (date "2023-04-29")
+    (rev "2.2")
     (company "Team 18")
   )
 
@@ -745,7 +745,7 @@
     (uuid fe3d8191-7eb4-4104-92ff-edc928f535a7)
   )
 
-  (text "Display" (at 74.93 22.86 0)
+  (text "Display" (at 78.74 24.13 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 813d540a-549c-4c17-8f77-42d5f7a52ed7)
   )
@@ -753,7 +753,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid c75ee8c6-7211-485d-a78d-7029b02985bf)
   )
-  (text "Buttons" (at 214.63 24.13 0)
+  (text "Buttons" (at 215.9 24.13 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid e1111b53-bcbf-4dbe-b8b5-390d3f332bef)
   )
