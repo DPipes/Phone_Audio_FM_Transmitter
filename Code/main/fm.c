@@ -114,7 +114,7 @@ void change_freq(void) {
     for (int i = 0; i < num_mins; i++) {
         bool check = true;
         for (int j = -offset; j <= offset; j++) {
-            uint8_t ind = chans[mins[i] + j];
+            uint8_t ind = mins[i] + j;
             if ((ind >= 0) && (ind < NUM_CHANS)) {
                 if (chans[ind].rssi_sum >= rssi_thresh) check = false;
             }

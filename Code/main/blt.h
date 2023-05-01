@@ -23,6 +23,7 @@
 #include "board.h"
 #include "audio_mem.h"
 #include "driver/gpio.h"
+#include "trans.h"
 
 #define TAG             "BT"
 #define DEVICE_NAME     "ECE445 FM Transmitter"

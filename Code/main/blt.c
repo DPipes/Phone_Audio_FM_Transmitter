@@ -177,6 +177,6 @@ void blt_metadata(uint8_t* tmp, uint8_t id, uint8_t len) {
         text[i + artist_len + track_len + 6] = artist[i];
     }
 
-    uint8_t len = album_len + artist_len + track_len + 6;
-    trans_rds_write(text, len);
+    uint8_t metadata_string = album_len + artist_len + track_len + 6;
+    trans_rds_write(text, metadata_string);
 }
