@@ -18,6 +18,7 @@ static uint8_t track_len = 0;
 static uint8_t artist_len = 0;
 static uint8_t album_len = 0;
 
+
 static void bt_app_avrc_ct_cb(esp_avrc_ct_cb_event_t event, esp_avrc_ct_cb_param_t *p_param) {
     esp_avrc_ct_cb_param_t *rc = p_param;
     switch (event) {
@@ -27,6 +28,7 @@ static void bt_app_avrc_ct_cb(esp_avrc_ct_cb_event_t event, esp_avrc_ct_cb_param
             memcpy(tmp, rc->meta_rsp.attr_text, rc->meta_rsp.attr_length);
             ESP_LOGI(TAG, "AVRC metadata rsp: attribute id 0x%x, %s", rc->meta_rsp.attr_id, tmp);
             blt_metadata(tmp, rc->meta_rsp.attr_id, rc->meta_rsp.attr_length);
+
             audio_free(tmp);
             break;
         }
@@ -65,6 +67,7 @@ void blt_init(void) {
     // I2S configuration and start
     i2s_stream_cfg_t i2s_config = I2S_STREAM_CFG_DEFAULT();
     // i2s_config.i2s_config.bits_per_sample = I2S_BITS_PER_SAMPLE_8BIT;
+
     audio_element_handle_t i2s_element = i2s_stream_init(&i2s_config);
     i2s_pin_config_t i2s_pins = {   // Reassign I2S pins from default
         .data_out_num = SD_PIN,
@@ -180,3 +183,4 @@ void blt_metadata(uint8_t* tmp, uint8_t id, uint8_t len) {
     uint8_t metadata_string = album_len + artist_len + track_len + 6;
     trans_rds_write(text, metadata_string);
 }
+

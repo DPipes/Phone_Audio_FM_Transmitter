@@ -48,7 +48,9 @@
  * @param event The type of event 
  * @param p_param The data for the event
  */
+
 // void bt_app_avrc_ct_cb(esp_avrc_ct_cb_event_t event, esp_avrc_ct_cb_param_t *p_param);
+
 
 /**
  * @brief Initializes the Bluetooth system.
@@ -64,5 +66,6 @@ void blt_init(void);
 uint8_t check_buttons(void);
 
 void blt_metadata(uint8_t *tmp, uint8_t id, uint8_t len);
+
 
 #endif
