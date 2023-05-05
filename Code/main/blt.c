@@ -11,6 +11,13 @@
 static esp_avrc_playback_stat_t playback_status = ESP_AVRC_PLAYBACK_PAUSED;
 static esp_periph_handle_t bt_periph;
 static audio_event_iface_handle_t event_handle;
+static char* track[METADATA_LEN];
+static char* artist[METADATA_LEN];
+static char* album[METADATA_LEN];
+static uint8_t track_len = 0;
+static uint8_t artist_len = 0;
+static uint8_t album_len = 0;
+
 
 static void bt_app_avrc_ct_cb(esp_avrc_ct_cb_event_t event, esp_avrc_ct_cb_param_t *p_param) {
     esp_avrc_ct_cb_param_t *rc = p_param;
@@ -20,6 +27,8 @@ static void bt_app_avrc_ct_cb(esp_avrc_ct_cb_event_t event, esp_avrc_ct_cb_param
             uint8_t *tmp = audio_calloc(1, rc->meta_rsp.attr_length + 1);
             memcpy(tmp, rc->meta_rsp.attr_text, rc->meta_rsp.attr_length);
             ESP_LOGI(TAG, "AVRC metadata rsp: attribute id 0x%x, %s", rc->meta_rsp.attr_id, tmp);
+            blt_metadata(tmp, rc->meta_rsp.attr_id, rc->meta_rsp.attr_length);
+
             audio_free(tmp);
             break;
         }
@@ -57,6 +66,8 @@ void blt_init(void) {
 
     // I2S configuration and start
     i2s_stream_cfg_t i2s_config = I2S_STREAM_CFG_DEFAULT();
+    // i2s_config.i2s_config.bits_per_sample = I2S_BITS_PER_SAMPLE_8BIT;
+
     audio_element_handle_t i2s_element = i2s_stream_init(&i2s_config);
     i2s_pin_config_t i2s_pins = {   // Reassign I2S pins from default
         .data_out_num = SD_PIN,
@@ -94,15 +105,15 @@ void blt_init(void) {
     return;
 }
 
-void check_buttons(void) {
+uint8_t check_buttons(void) {
     audio_event_iface_msg_t msg;
     // Check for events
-    audio_event_iface_listen(event_handle, &msg, portMAX_DELAY);
+    audio_event_iface_listen(event_handle, &msg, 0);
     if((int)msg.source_type == PERIPH_ID_BUTTON && (int)msg.cmd == PERIPH_BUTTON_PRESSED) {
         // Button pressed 
-        ESP_LOGI(TAG, "Button pressed: gpio_num %d", (int)msg.data, (int)msg.cmd);
+        // ESP_LOGI(TAG, "Button pressed: gpio_num %d", (int)msg.data, (int)msg.cmd);
         switch((int)msg.data) {
-            case 18: 
+            case AVRC_PLAY_PAUSE_PIN: 
                 if(playback_status == ESP_AVRC_PLAYBACK_PLAYING) {
                     periph_bluetooth_pause(bt_periph);
                     ESP_LOGI(TAG, "AVRC playback: pause");
@@ -111,17 +122,65 @@ void check_buttons(void) {
                     ESP_LOGI(TAG, "AVRC playback: start");
                 }
                 break;
-            case 21:
+            case AVRC_NEXT_PIN:
                 periph_bluetooth_next(bt_periph);
                 ESP_LOGI(TAG, "AVRC playback: next track");
                 break;
-            case 16:
+            case AVRC_PREV_PIN:
                 periph_bluetooth_prev(bt_periph);
-                ESP_LOGI(TAG, "playback: previous track");
+                ESP_LOGI(TAG, "AVRC playback: previous track");
                 break;
             default:
                 break; 
         }
+        return (int)msg.data;
     }
-    return;
+    return 0;
 }
+
+void blt_metadata(uint8_t* tmp, uint8_t id, uint8_t len) {
+    switch (id) {
+    case 1 :
+        for (int i = 0; i < METADATA_LEN; i++) {
+            if (i < len) track[i] = tmp[i];
+            track_len = len;
+        }
+        break;
+    case 2:
+        for (int i = 0; i < METADATA_LEN; i++) {
+            if (i < len) artist[i] = tmp[i];
+            artist_len = len;
+        }
+        break;
+    case 4:
+        for (int i = 0; i < METADATA_LEN; i++) {
+            if (i < len) album[i] = tmp[i];
+            album_len = len;
+        }
+        break;
+    default:
+        break;
+    }
+
+    char* text[80];
+
+    for (int i = 0; i < track_len; i++) {
+        text[i] = track[i];
+    }
+    text[track_len] = 0x20;
+    text[track_len + 1] = 0x20;
+    text[track_len + 2] = 0x20;
+    for (int i = 0; i < artist_len; i++) {
+        text[i + track_len + 3] = artist[i];
+    }
+    text[artist_len + track_len + 3] = 0x20;
+    text[artist_len + track_len + 4] = 0x20;
+    text[artist_len + track_len + 5] = 0x20;
+    for (int i = 0; i < album_len; i++) {
+        text[i + artist_len + track_len + 6] = artist[i];
+    }
+
+    uint8_t metadata_string = album_len + artist_len + track_len + 6;
+    trans_rds_write(text, metadata_string);
+}
+
